@@ -1,0 +1,76 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Registration</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Registration</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>User Information</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-input labelPlacement="floating" type="text" id="firstName" formControlName="firstName" required >
+              <div slot="label">First Name <ion-text color="danger">(Required)</ion-text></div>
+            </ion-input>
+          </ion-item>
+          <br>
+          <ion-item>
+            <ion-input labelPlacement="floating" type="text" id="lastName" formControlName="lastName" required>
+              <div slot="label">Last Name <ion-text color="danger">(Required)</ion-text></div>
+            </ion-input>
+          </ion-item>
+          <br>
+          <ion-text style="font-size: 0.9em;">Email address must be in a valid format (e.g. example&#64;domain.com).</ion-text>
+          <ion-item>
+            <ion-input labelPlacement="floating" type="email" id="email" formControlName="email" [errorText]="emailInvalid() ? 'Invalid Email' : ''" required>
+              <div slot="label">Email <ion-text color="danger">(Required)</ion-text></div>
+            </ion-input>
+            <ion-icon [name]="emailInvalid() ? 'close-circle' : 'checkmark-circle'"  [color]="emailInvalid() ? 'danger' : 'success'" slot="end"></ion-icon>
+          </ion-item>
+          <br>
+          <p>Password must be at least 8 characters long and contain at least one letter and one number.</p>
+          <ion-item>
+            <ion-input type="password" labelPlacement="floating" id="password" formControlName="password" [errorText]="passwordInvalid() ? 'Invalid Password' : ''" required>
+              <div slot="label">Password <ion-text color="danger">(Required)</ion-text></div>
+            </ion-input>
+            <ion-icon [name]="passwordInvalid() ? 'close-circle' : 'checkmark-circle'"  [color]="passwordInvalid() ? 'danger' : 'success'" slot="end"></ion-icon>
+          </ion-item>
+          <br>
+          
+          <p>Phone number can be international and must be between 1 and 14 digits.</p>
+          
+          <ion-item>
+            <ion-input labelPlacement="floating" type="tel" id="phone" formControlName="phone" [errorText]="phoneInvalid() ? 'Invalid Phone Number' : ''" required>
+              <div slot="label">Phone <ion-text color="danger">(Required)</ion-text></div>
+            </ion-input>
+            <ion-icon [name]="phoneInvalid() ? 'close-circle' : 'checkmark-circle'"  [color]="phoneInvalid() ? 'danger' : 'success'" slot="end"></ion-icon>
+            <!-- <ion-button color="danger" *ngIf="phoneInvalid()" slot="end">call_missed</ion-button> -->
+          </ion-item>
+         <br>
+          <ion-item >
+           
+            <ion-select id="userType" formControlName="userType" required >
+              <div slot="label">User Type <ion-text color="danger">(Required)</ion-text></div>
+              <ion-select-option  value="attendee">Attendee</ion-select-option>
+              <ion-select-option value="client">Client</ion-select-option>
+            </ion-select>
+
+          </ion-item>
+          <br>
+          <ion-button type="submit" expand="block"  [disabled]="myForm.invalid">Submit</ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </ion-content>
+  
+</ion-content>
