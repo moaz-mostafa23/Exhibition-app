@@ -78,14 +78,19 @@ export class AuthService {
       console.error('Error signing out:', error);
     }
   }
-    // Add user data to users collection
-    private async addUserToFirestore(user: any, data: User): Promise<void> {
-      const usersRef = collection(this.firestore, 'users');
-      await addDoc(usersRef, {
-        ...data,
-        uid: user.uid,
-      });
-    }
+
+  
+  private async addUserToFirestore(user: any, data: User): Promise<void> {
+    const { password, ...userData } = data;
+  
+    const usersRef = collection(this.firestore, 'users');
+    await addDoc(usersRef, {
+      ...userData,
+      uid: user.uid,
+    });
+  }
+  
+    
 
 
 
