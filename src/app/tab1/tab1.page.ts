@@ -40,7 +40,7 @@ export class Tab1Page implements OnInit, OnDestroy {
       try {
         const user = await this.getUser();
         if (!loggedIn || !user) {
-          this.navCtrl.navigateForward('/registration');
+          this.navCtrl.navigateForward('/login');
         } else {
           console.log(user);
           this.user = user;
