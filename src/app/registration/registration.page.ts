@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
+import { AuthService, User } from '../auth.service';
+import { LoadingController } from '@ionic/angular';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-registration',
@@ -11,7 +14,7 @@ export class RegistrationPage  {
   
  
 
-  constructor() {
+  constructor(private auth: AuthService, private load: LoadingController, private navCtrl: NavController) {
     this.myForm = new FormGroup({
       firstName: new FormControl('', [Validators.required]),
       lastName: new FormControl('', [Validators.required]),
@@ -67,13 +70,27 @@ phoneInvalid() {
   return this.myForm.controls['phone'].invalid && (this.myForm.controls['phone'].dirty || this.myForm.controls['phone'].touched);
 
 }
-onSubmit() {
+async onSubmit() {
   if (this.myForm.invalid) {
     console.error('Form is invalid:', this.myForm.errors);
     return;
+  }else{
+    const loader = await this.load.create({ message: 'Signing up...' });
+    try{
+      loader.present();
+    const registeredUser: User = this.myForm.value;
+    await this.auth.signUp(registeredUser);
+    await loader.dismiss();
+    this.navCtrl.navigateForward('/login');
+    }catch(err){
+      await loader.dismiss();
+      console.log(err);
+    }
+    
+    
   }
 
-  console.log(this.myForm.value);
+  
 }
 
 

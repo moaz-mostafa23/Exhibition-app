@@ -1,5 +1,8 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
     <ion-title>Registration</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -60,15 +63,19 @@
           <ion-item >
            
             <ion-select id="userType" formControlName="userType" required >
-              <div slot="label">User Type <ion-text color="danger">(Required)</ion-text></div>
+              <div slot="label">I am a <ion-text color="danger">(Required)</ion-text></div>
               <ion-select-option  value="attendee">Attendee</ion-select-option>
               <ion-select-option value="client">Client</ion-select-option>
+              <ion-select-option value="admin">Admin</ion-select-option>
             </ion-select>
 
           </ion-item>
           <br>
           <ion-button type="submit" expand="block"  [disabled]="myForm.invalid">Submit</ion-button>
-        </form>
+        </form><br>
+        <ion-text color="primary"  routerLink="/login"><strong>Already a User? Click Here</strong></ion-text>
+        <br>
+        <br>
       </ion-card-content>
     </ion-card>
   </ion-content>

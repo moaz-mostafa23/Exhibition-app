@@ -1,5 +1,8 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
     <ion-title>Login</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -7,9 +10,29 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button></ion-back-button>
+      </ion-buttons>
       <ion-title size="large">Login</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <ion-card style="margin-top: 40%;">
+    <ion-card-content>
+      <ion-item>
+        <ion-input labelPlacement="floating" type="email" [(ngModel)]="email" label="Email" [errorText]="emailWrong() ? emailErrorText : ''" placeholder="Enter Email" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Password" palceholder="Enter Password" labelPlacement="floating" [(ngModel)]="password" [errorText]="passWrong() ? passwordErrorText : ''" type="password" required></ion-input>
+      </ion-item>
+      <br>
+      <ion-button color="primary" expand="block" (click)="Login()">Login</ion-button>
+      <br>
+      <ion-text color="primary" routerLink="/registration"><strong>New User? Click Here to Register</strong></ion-text>
+    </ion-card-content>
+  </ion-card>
+
+
 
   
 </ion-content>
