@@ -22,20 +22,20 @@
       <ion-card-content>
         <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
           <ion-item>
-            <ion-input labelPlacement="floating" type="text" id="firstName" formControlName="firstName" required >
+            <ion-input labelPlacement="floating" type="text" id="firstName" formControlName="firstName" required placeholder="Enter First Name">
               <div slot="label">First Name <ion-text color="danger">(Required)</ion-text></div>
             </ion-input>
           </ion-item>
           <br>
           <ion-item>
-            <ion-input labelPlacement="floating" type="text" id="lastName" formControlName="lastName" required>
+            <ion-input labelPlacement="floating" type="text" id="lastName" formControlName="lastName" required placeholder="Enter Last Name">
               <div slot="label">Last Name <ion-text color="danger">(Required)</ion-text></div>
             </ion-input>
           </ion-item>
           <br>
           <ion-text style="font-size: 0.9em;">Email address must be in a valid format (e.g. example&#64;domain.com).</ion-text>
           <ion-item>
-            <ion-input labelPlacement="floating" type="email" id="email" formControlName="email" [errorText]="emailInvalid() ? 'Invalid Email' : ''" required>
+            <ion-input placeholder="Enter Email" labelPlacement="floating" type="email" id="email" formControlName="email" [errorText]="emailInvalid() ? 'Invalid Email' : ''" required>
               <div slot="label">Email <ion-text color="danger">(Required)</ion-text></div>
             </ion-input>
             <ion-icon [name]="emailInvalid() ? 'close-circle' : 'checkmark-circle'"  [color]="emailInvalid() ? 'danger' : 'success'" slot="end"></ion-icon>
@@ -43,17 +43,26 @@
           <br>
           <p>Password must be at least 8 characters long and contain at least one letter and one number.</p>
           <ion-item>
-            <ion-input type="password" labelPlacement="floating" id="password" formControlName="password" [errorText]="passwordInvalid() ? 'Invalid Password' : ''" required>
+            <ion-input type="password" placeholder="Enter your Password" labelPlacement="floating" id="password" formControlName="password" [errorText]="passwordInvalid() ? 'Invalid Password' : ''" required>
               <div slot="label">Password <ion-text color="danger">(Required)</ion-text></div>
             </ion-input>
             <ion-icon [name]="passwordInvalid() ? 'close-circle' : 'checkmark-circle'"  [color]="passwordInvalid() ? 'danger' : 'success'" slot="end"></ion-icon>
+          </ion-item>
+          <br>
+          <ion-item>
+            <ion-input labelPlacement="floating" placeholder="Confirm Your Password" type="password" formControlName="confirmPassword" [errorText]="confirmPasswordInvalid() ? 'Passwords do not match' : ''" required>
+              <div slot="label">Confirm Password <ion-text color="danger">(Required)</ion-text></div>
+
+            </ion-input>
+            <ion-icon [name]="confirmPasswordInvalid() ? 'close-circle' : 'checkmark-circle'"
+                       [color]="confirmPasswordInvalid() ? 'danger' : 'success'" slot="end"></ion-icon>
           </ion-item>
           <br>
           
           <p>Phone number can be international and must be between 1 and 14 digits.</p>
           
           <ion-item>
-            <ion-input labelPlacement="floating" type="tel" id="phone" formControlName="phone" [errorText]="phoneInvalid() ? 'Invalid Phone Number' : ''" required>
+            <ion-input labelPlacement="floating" placeholder="Enter Phone Number" type="tel" id="phone" formControlName="phone" [errorText]="phoneInvalid() ? 'Invalid Phone Number' : ''" required>
               <div slot="label">Phone <ion-text color="danger">(Required)</ion-text></div>
             </ion-input>
             <ion-icon [name]="phoneInvalid() ? 'close-circle' : 'checkmark-circle'"  [color]="phoneInvalid() ? 'danger' : 'success'" slot="end"></ion-icon>

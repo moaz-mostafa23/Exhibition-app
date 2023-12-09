@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { AuthService, User } from '../auth.service';
 import { LoadingController } from '@ionic/angular';
 import { NavController } from '@ionic/angular';
@@ -19,11 +19,10 @@ export class RegistrationPage  {
       firstName: new FormControl('', [Validators.required]),
       lastName: new FormControl('', [Validators.required]),
       password: new FormControl('', [Validators.required, Validators.minLength(8), this.passwordValidator()]),
+      confirmPassword: new FormControl('', [Validators.required, this.confirmPasswordValidator()]),
       email: new FormControl('', [Validators.required, Validators.email]),
       phone: new FormControl('', [Validators.required, this.phoneValidator()]),
-    
-  
-userType: new FormControl('', [Validators.required]),
+      userType: new FormControl('', [Validators.required]),
     });
 
    }
@@ -37,6 +36,27 @@ userType: new FormControl('', [Validators.required]),
       return !regex.test(password) ? { invalidPassword: true} : null;
   };
 }
+confirmPasswordValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!this.myForm) {
+      return null;
+    }
+    const passwordControl = this.myForm.get('password');
+    if (!passwordControl || !control.value) {
+      return null;
+    }
+
+    return passwordControl.value === control.value ? null : { passwordsDoNotMatch: true };
+  };
+}
+
+
+
+
+confirmPasswordInvalid() {
+  return this.myForm.controls['confirmPassword'].invalid && (this.myForm.controls['confirmPassword'].dirty || this.myForm.controls['confirmPassword'].touched);
+}
+
 
 // Email validator function
 emailValidator(): ValidatorFn {
@@ -74,23 +94,29 @@ async onSubmit() {
   if (this.myForm.invalid) {
     console.error('Form is invalid:', this.myForm.errors);
     return;
-  }else{
-    const loader = await this.load.create({ message: 'Signing up...' });
-    try{
-      loader.present();
-    const registeredUser: User = this.myForm.value;
+  }
+
+  const loader = await this.load.create({ message: 'Signing up...' });
+  try {
+    loader.present();
+
+    // Extract only relevant values from the form
+    const registeredUser: User = {
+      firstName: this.myForm.controls['firstName'].value,
+      lastName: this.myForm.controls['lastName'].value,
+      password: this.myForm.controls['password'].value,
+      email: this.myForm.controls['email'].value,
+      phone: this.myForm.controls['phone'].value,
+      userType: this.myForm.controls['userType'].value
+    };
+
     await this.auth.signUp(registeredUser);
     await loader.dismiss();
     this.navCtrl.navigateForward('/login');
-    }catch(err){
-      await loader.dismiss();
-      console.log(err);
-    }
-    
-    
+  } catch (err) {
+    await loader.dismiss();
+    console.log(err);
   }
-
-  
 }
 
 
