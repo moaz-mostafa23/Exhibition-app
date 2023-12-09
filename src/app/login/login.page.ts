@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService, User } from '../auth.service';
-import { LoadingController } from '@ionic/angular';
-import { NavController } from '@ionic/angular';
+import { LoadingController, NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +12,7 @@ export class LoginPage implements OnInit {
   password:string = "";
   emailErrorText:string = "";
   passwordErrorText:string = "";
-  constructor(private auth:AuthService, private load:LoadingController, private navCtrl:NavController) { }
+  constructor(private auth:AuthService, private load:LoadingController, private navCtrl: NavController) { }
 
   emailWrong(){
     if(this.email === ""){
@@ -40,6 +39,7 @@ export class LoginPage implements OnInit {
       const currentUser = await this.auth.login(this.email, this.password);
       await loader.dismiss();
       console.log(currentUser);
+      this.auth.userLoggedIn.next(true);
       this.navCtrl.navigateForward('/tabs');
       }catch(err){
         await loader.dismiss();

@@ -6,10 +6,12 @@ UserCredential
 import {collection, addDoc, getDocs, where, query} from '@angular/fire/firestore'
 import { AlertController } from '@ionic/angular';
 import {Firestore} from '@angular/fire/firestore'
+import {BehaviorSubject} from 'rxjs'
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  userLoggedIn = new BehaviorSubject<boolean>(false);
 
   constructor(private alert:AlertController,private auth: Auth, private firestore: Firestore) {}
 
@@ -94,6 +96,35 @@ export class AuthService {
     const snapshot = await getDocs(q);
     return snapshot.docs.map((doc)=> doc.data() as User)
   }
+  async isLoggedIn(): Promise<boolean> {
+    try {
+      const user = await this.auth.currentUser;
+      return !!user; // Return true if user exists, false otherwise
+    } catch (error) {
+      console.error('Error checking user login:', error);
+      return false;
+    }
+  }
+  async getUserByUid(uid: string): Promise<User | null> {
+    try {
+      const usersRef = collection(this.firestore, 'users');
+      const q = query(usersRef, where('uid', '==', uid));
+      const snapshot = await getDocs(q);
+  
+      if (snapshot.docs.length === 0) {
+        return null; // User not found
+      }
+  
+      const doc = snapshot.docs[0];
+      const userData = doc.data() as User;
+      return userData;
+    } catch (error) {
+      console.error('Error getting user by uid:', error);
+      return null;
+    }
+  }
+  
+  
 }
 
 

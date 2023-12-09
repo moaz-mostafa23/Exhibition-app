@@ -13,6 +13,23 @@
     </ion-toolbar>
   </ion-header>
 
+  <ion-list *ngIf="user">
+    <ion-item>
+      {{user.email}}
+    </ion-item>
+    <ion-item>
+      {{user.firstName}}
+    </ion-item>
+    <ion-item>
+      {{user.lastName}}
+    </ion-item>
+    <ion-item>
+      {{user.phone}}
+    </ion-item>
+  </ion-list>
+
+  
+  
   
 
   <app-explore-container name="Tab 1 page"></app-explore-container>
