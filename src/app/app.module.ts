@@ -11,6 +11,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {ReactiveFormsModule} from '@angular/forms'
 
+import { IonicStorageModule } from '@ionic/storage-angular';
+
 
 const firebaseConfig = { apiKey: "AIzaSyCpXrqctZrI4oee53qBKtZyWJBmIA7JDn4",
 authDomain: "exhibition-app-eebdc.firebaseapp.com",
@@ -21,7 +23,7 @@ appId: "1:983679106549:web:29fda1cd732e4bb8a1f4bc",
 measurementId: "G-HKJM4K919E"};
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot({mode:'ios'}), AppRoutingModule, HttpClientModule, provideFirebaseApp(()=> initializeApp(firebaseConfig)), provideFirestore(()=> getFirestore()), provideAnalytics(()=> getAnalytics()), provideAuth(()=> getAuth()), ReactiveFormsModule],
+  imports: [BrowserModule, IonicStorageModule.forRoot() ,IonicModule.forRoot({mode:'ios'}), AppRoutingModule, HttpClientModule, provideFirebaseApp(()=> initializeApp(firebaseConfig)), provideFirestore(()=> getFirestore()), provideAnalytics(()=> getAnalytics()), provideAuth(()=> getAuth()), ReactiveFormsModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })

@@ -10,51 +10,46 @@ import { AuthService } from '../auth.service';
   styleUrls: ['tab1.page.scss'],
 })
 export class Tab1Page implements OnInit, OnDestroy {
-  user: User | any;
+  user: any;
   private auth: Auth | any;
 
   constructor(
     private authService: AuthService,
     private loadingController: LoadingController,
-    private navCtrl: NavController
-  ) {}
+    private navCtrl: NavController,
+  ) { }
 
-  async getUser() {
-    const currentUser = await this.auth.currentUser;
-    if (currentUser) {
-      return await this.authService.getUserByUid(currentUser.uid);
-    } else {
-      return null;
-    }
-  }
-
+ 
   async ngOnInit() {
-    this.auth = getAuth();
-
-    this.authService.userLoggedIn.subscribe(async (loggedIn) => {
+    this.authService.userLoggedIn.subscribe(async ()=>{
       const loading = await this.loadingController.create({
         message: 'Loading user information...',
       });
       await loading.present();
-
-      try {
-        const user = await this.getUser();
-        if (!loggedIn || !user) {
+      try{
+        const isLoggedIn = await this.authService.isLoggedIn();
+        if(isLoggedIn){
+          this.user = await this.authService.getUserData();
+          loading.dismiss();
+        }else{
+          loading.dismiss();
           this.navCtrl.navigateForward('/login');
-        } else {
-          console.log(user);
-          this.user = user;
         }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        await loading.dismiss();
+      }catch(err){
+        loading.dismiss();
+        console.log(err);
       }
-    });
-  }
 
+
+    });
+    
+  }
   ngOnDestroy(): void {
     // Unsubscribe from the userLoggedIn observable to avoid memory leaks
     this.authService.userLoggedIn.unsubscribe();
   }
+
+
+  
+
 }

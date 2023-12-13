@@ -40,6 +40,7 @@ export class LoginPage implements OnInit {
       await loader.dismiss();
       console.log(currentUser);
       this.auth.userLoggedIn.next(true);
+
       this.navCtrl.navigateForward('/tabs');
       }catch(err){
         await loader.dismiss();

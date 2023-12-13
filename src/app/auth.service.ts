@@ -7,13 +7,16 @@ import {collection, addDoc, getDocs, where, query} from '@angular/fire/firestore
 import { AlertController } from '@ionic/angular';
 import {Firestore} from '@angular/fire/firestore'
 import {BehaviorSubject} from 'rxjs'
+
+import { Storage } from '@ionic/storage-angular';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  userLoggedIn = new BehaviorSubject<boolean>(false);
-
-  constructor(private alert:AlertController,private auth: Auth, private firestore: Firestore) {}
+userLoggedIn = new BehaviorSubject<boolean>(false);
+  constructor(private alert:AlertController,private auth: Auth, private firestore: Firestore, private storage:Storage) {
+    this.storage.create();
+  }
 
   async signUp(user:User): Promise<void>{
     try{
@@ -69,6 +72,8 @@ export class AuthService {
       throw error;
     }
   }
+
+  
   
   // User sign out
   async signout(): Promise<void> {
@@ -95,22 +100,43 @@ export class AuthService {
 
 
   // Check if email exists in users collection
-  private async getExistingUsersByEmail(email: string): Promise<User[]>{
+  private async getExistingUsersByEmail(email: string): Promise<any[]>{
     const usersRef = collection(this.firestore, 'users');
     const q = query(usersRef, where('email', '==', email));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc)=> doc.data() as User)
+    return snapshot.docs.map((doc)=> doc.data())
   }
   async isLoggedIn(): Promise<boolean> {
     try {
       const user = await this.auth.currentUser;
-      return !!user; // Return true if user exists, false otherwise
+       if(user){
+        let userData = this.getUserByUid(user.uid);
+        await this.storage.set('UserData', userData);
+        await this.storage.set('isLoggedIn', true);
+        return true;
+       }else{
+          await this.storage.clear();
+          return false;
+       } 
     } catch (error) {
       console.error('Error checking user login:', error);
       return false;
     }
   }
-  async getUserByUid(uid: string): Promise<User | null> {
+
+  async getUserData(){
+    const userData = await this.storage.get('UserData');
+    const isLoggedIn = await this.storage.get('isLoggedIn');
+    if(userData && isLoggedIn){
+      console.log(userData);
+      return userData;
+    }else{
+      return null;
+    }
+  }
+
+
+  async getUserByUid(uid: string): Promise<any> {
     try {
       const usersRef = collection(this.firestore, 'users');
       const q = query(usersRef, where('uid', '==', uid));
@@ -121,7 +147,7 @@ export class AuthService {
       }
   
       const doc = snapshot.docs[0];
-      const userData = doc.data() as User;
+      const userData = doc.data();
       return userData;
     } catch (error) {
       console.error('Error getting user by uid:', error);
