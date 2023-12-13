@@ -7,6 +7,7 @@ import {collection, addDoc, getDocs, where, query} from '@angular/fire/firestore
 import { AlertController } from '@ionic/angular';
 import {Firestore} from '@angular/fire/firestore'
 import {BehaviorSubject} from 'rxjs'
+import { CrudService } from './crud.service';
 
 import { Storage } from '@ionic/storage-angular';
 @Injectable({
@@ -14,7 +15,7 @@ import { Storage } from '@ionic/storage-angular';
 })
 export class AuthService {
 userLoggedIn = new BehaviorSubject<boolean>(false);
-  constructor(private alert:AlertController,private auth: Auth, private firestore: Firestore, private storage:Storage) {
+  constructor(private crud:CrudService ,private alert:AlertController,private auth: Auth, private firestore: Firestore, private storage:Storage) {
     this.storage.create();
   }
 
@@ -153,6 +154,25 @@ userLoggedIn = new BehaviorSubject<boolean>(false);
       console.error('Error getting user by uid:', error);
       return null;
     }
+  }
+
+  async deleteUserAccount(){
+    const currentUser:any = await this.auth.currentUser;
+    try{
+      const userRef = collection(this.firestore, 'users');
+      const q = query(userRef, where('uid', '==', currentUser.uid));
+      const snapshot:any = await getDocs(q);
+      const docId = snapshot.docs[0].id;
+      await this.auth.currentUser?.delete();
+      await this.crud.deleteDocument('users', docId);
+    }catch(err){
+      console.log(err);
+    }
+
+  }
+
+  getCurrentUser(){
+    return this.auth.currentUser;
   }
   
   

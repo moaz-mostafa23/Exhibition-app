@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
-import { LoadingController, NavController } from '@ionic/angular';
+import { AlertController, LoadingController, NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab3',
@@ -11,7 +11,7 @@ export class Tab3Page implements OnInit, OnDestroy {
 
   user:any;
 
-  constructor(private authService: AuthService, private loading:LoadingController, private navCtrl:NavController) {}
+  constructor(private authService: AuthService, private loading:LoadingController, private navCtrl:NavController, private alertCtrl: AlertController) {}
 
 
   async  ngOnInit() {
@@ -45,6 +45,39 @@ export class Tab3Page implements OnInit, OnDestroy {
       console.log(err);
 
     }
+  }
+
+
+  async deleteAccount(){
+    const alert = await this.alertCtrl.create({
+      header: 'Delete Account',
+      message: 'Are you sure you want to delete your account? There is no going back.',
+      buttons: [
+        {
+          text:'Cancel',
+          role:'cancel'
+        },
+        {
+          text:'Delete',
+          handler: async ()=>{
+            const loader = this.loading.create({message: 'Loading...'});
+            (await loader).present();
+            try{
+            await this.authService.deleteUserAccount();
+            await this.authService.isLoggedIn();
+            (await loader).dismiss();
+            await this.navCtrl.navigateForward("/login");
+            }catch(err){
+              (await loader).dismiss();
+              console.log(err);
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+
   }
 
 
