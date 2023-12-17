@@ -39,9 +39,10 @@
     </ion-item>
   </ion-list>
 
-  
-  
-  
+
+<div *ngIf="user && user.userType === 'admin'">
+  <ion-button expand="full" (click)="openHallModal()" >Add New Hall</ion-button>
+</div>
 
   <app-explore-container name="Tab 1 page"></app-explore-container>
 </ion-content>
