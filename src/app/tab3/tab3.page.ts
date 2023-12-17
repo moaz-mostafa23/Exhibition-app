@@ -84,6 +84,10 @@ export class Tab3Page implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.authService.userLoggedIn.unsubscribe();
 }
+// route to edit profile page
+     viewEdit(){
+        this.navCtrl.navigateForward("/edit-profile");
+               }
 
 
 }

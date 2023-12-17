@@ -1,0 +1,30 @@
+
+
+
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>editProfile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <ion-list *ngIf="user">
+    <ion-item>
+      <ion-input [(ngModel)]="user.email">Email:</ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input [(ngModel)]="user.firstName">First Name:</ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input [(ngModel)]="user.lastName">Last Name:</ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input [(ngModel)]="user.phone">Phone Number</ion-input>
+    </ion-item>
+    <ion-item>
+      <!-- <ion-button (click)="updateProfile()">Update Profile</ion-button> -->
+    </ion-item>
+  </ion-list>
+
+</ion-content>
