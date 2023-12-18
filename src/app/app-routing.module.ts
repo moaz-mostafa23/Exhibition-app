@@ -14,12 +14,13 @@ const routes: Routes = [
   {
     path: 'login',
     loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
-  },  {
+  },
+  {
     path: 'edit-profile',
     loadChildren: () => import('./edit-profile/edit-profile.module').then( m => m.EditProfilePageModule)
   },
   {
-    path: 'event',
+    path: 'event/:name',
     loadChildren: () => import('./event/event.module').then( m => m.EventPageModule)
   }
 

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-event',
@@ -7,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EventPage implements OnInit {
 
-  constructor() { }
+  eventName: string = '';
+
+  constructor(public activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
+    this.eventName = this.activatedRoute.snapshot.paramMap.get('name') ?? '';
   }
 
 }
