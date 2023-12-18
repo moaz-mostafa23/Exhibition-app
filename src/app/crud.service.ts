@@ -5,6 +5,18 @@ import { DocumentData } from 'firebase/firestore';
 import { Observable, of } from 'rxjs';
 
 
+export interface Event {
+  agendas: string;
+  client_id: string;
+  end_date: string;
+  hall_id: string;
+  name: string;
+  picture: string;
+  start_date: string;
+  status: string;
+  hall_name: void;
+}
+
 @Injectable({
   providedIn: 'root'
 })
