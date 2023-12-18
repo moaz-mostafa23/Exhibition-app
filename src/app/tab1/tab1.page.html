@@ -94,4 +94,45 @@
   </div>
   <!-- End of client Screen -->
 
+  <!-- <ion-list *ngIf="user">
+    <ion-item>
+      {{user.email}}
+    </ion-item>
+    <ion-item>
+      {{user.firstName}}
+    </ion-item>
+    <ion-item>
+      {{user.lastName}}
+    </ion-item>
+    <ion-item>
+      {{user.phone}}
+    </ion-item>
+  </ion-list> -->
+
+
+<div *ngIf="user && user.userType === 'admin'">
+  <ion-button expand="full" (click)="openHallModal()" >Add New Hall</ion-button>
+    <!-- Display hall details in cards -->
+    <ion-card *ngFor="let hall of halls">
+      <ion-card-header>
+        <ion-card-title>{{ hall.name }}</ion-card-title>
+      </ion-card-header>
+  
+      <ion-card-content>
+        <p>Booth Fitting: {{ hall.booth_fitting }}</p>
+        <p>Capacity: {{ hall.capacity }}</p>
+        <p>Contact Info: {{ hall.contact_info }}</p>
+        <img src="{{ hall.floor_plan }}" alt="Floor Plan">
+      </ion-card-content>
+
+          <!-- Delete button with delete icon -->
+    <ion-item>
+      <ion-button (click)="deleteHall(hall.id)" fill="clear" color="danger">
+        <ion-icon name="trash"></ion-icon> Delete
+      </ion-button>
+    </ion-item>
+
+    </ion-card>
+</div>
+
 </ion-content>
