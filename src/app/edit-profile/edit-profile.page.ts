@@ -42,19 +42,19 @@ export class EditProfilePage implements OnInit {
 }
 );
   }
-  // async updateProfile(){
-  //   const loading = await this.loadingController.create({
-  //     message: 'Updating profile...',
-  //   });
-  //   await loading.present();
-  //   try{
-  //     await this.authService.updateProfile(this.user);
-  //     await loading.dismiss();
-  //   }catch(err){
-  //     loading.dismiss();
-  //     console.log(err);
-  //   }
-  // }
+  async updateProfile(){
+    const loading = await this.loadingController.create({
+      message: 'Updating profile...',
+    });
+    await loading.present();
+    try{
+      await this.authService.updateProfile(this.user);
+      await loading.dismiss();
+    }catch(err){
+      loading.dismiss();
+      console.log(err);
+    }
+  }
   ngOnDestroy(): void {
     // Unsubscribe from the userLoggedIn observable to avoid memory leaks
     this.authService.userLoggedIn.unsubscribe();
