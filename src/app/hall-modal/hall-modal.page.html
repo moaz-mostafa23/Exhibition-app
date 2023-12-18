@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Add Hall</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form (ngSubmit)="submitForm()">
+    <!-- Form fields for booth_fitting, capacity, contact_info, floor_plan, name -->
+    <ion-item>
+      <ion-label position="floating">Booth Fitting</ion-label>
+      <ion-input type="text" [(ngModel)]="hall.booth_fitting" name="booth_fitting"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Capacity</ion-label>
+      <ion-input type="text" [(ngModel)]="hall.capacity" name="capacity"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Contact Info</ion-label>
+      <ion-input type="text" [(ngModel)]="hall.contact_info" name="contact_info"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Floor Plan</ion-label>
+      <ion-input type="text" [(ngModel)]="hall.floor_plan" name="floor_plan"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Name</ion-label>
+      <ion-input type="text" [(ngModel)]="hall.name" name="name"></ion-input>
+    </ion-item>
+    
+    <ion-button type="submit" expand="full">Submit</ion-button>
+  </form>
+</ion-content>
