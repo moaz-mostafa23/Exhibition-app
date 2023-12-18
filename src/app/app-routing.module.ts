@@ -17,6 +17,10 @@ const routes: Routes = [
   },  {
     path: 'edit-profile',
     loadChildren: () => import('./edit-profile/edit-profile.module').then( m => m.EditProfilePageModule)
+  },
+  {
+    path: 'event',
+    loadChildren: () => import('./event/event.module').then( m => m.EventPageModule)
   }
 
 
