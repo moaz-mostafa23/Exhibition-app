@@ -4,6 +4,8 @@ import { User } from '../auth.service';
 import { Auth, getAuth } from '@angular/fire/auth';
 import { AuthService } from '../auth.service';
 import { HallModalPage } from '../hall-modal/hall-modal.page';
+import { CrudService } from '../crud.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-tab1',
@@ -12,13 +14,15 @@ import { HallModalPage } from '../hall-modal/hall-modal.page';
 })
 export class Tab1Page implements OnInit, OnDestroy {
   user: any;
+  halls: any
   private auth: Auth | any;
 
   constructor(
     private authService: AuthService,
     private loadingController: LoadingController,
     private navCtrl: NavController,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private CrudService: CrudService
   ) { }
 
 
@@ -32,6 +36,11 @@ export class Tab1Page implements OnInit, OnDestroy {
         const isLoggedIn = await this.authService.isLoggedIn();
         if (isLoggedIn) {
           this.user = await this.authService.getUserData();
+          const documents$ = this.CrudService.getDocuments('halls'); // Update to halls
+          this.halls = await firstValueFrom(documents$);
+
+          console.log('halls', this.halls);
+
           loading.dismiss();
         } else {
           loading.dismiss();
@@ -63,6 +72,17 @@ export class Tab1Page implements OnInit, OnDestroy {
       console.log('Modal presented');
     } catch (error) {
       console.error('Error opening Hall Modal', error);
+    }
+  }
+
+  async deleteHall(hallId: string) {
+    try {
+      // Call your CRUD service to delete the hall by its ID
+      await this.CrudService.deleteDocument('halls', hallId);
+      // Optionally, update the local halls array to reflect the deletion immediately
+      this.halls = this.halls.filter((hall: { id: string; }) => hall.id !== hallId);
+    } catch (error) {
+      console.error('Error deleting hall:', error);
     }
   }
 
