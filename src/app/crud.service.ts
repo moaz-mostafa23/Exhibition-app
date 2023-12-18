@@ -17,6 +17,15 @@ export interface Event {
   hall_name: void;
 }
 
+export interface Hall {
+  booth_fiting: string;
+  capacity: string;
+  contact_info: string;
+  name: string;
+  floor_plan: string;
+  start_date: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
