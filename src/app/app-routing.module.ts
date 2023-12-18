@@ -22,7 +22,7 @@ const routes: Routes = [
   {
     path: 'add-admin',
     loadChildren: () => import('./add-admin/add-admin.module').then( m => m.AddAdminPageModule)
-    loadChildren: () => import('./edit-profile/edit-profile.module').then(m => m.EditProfilePageModule)
+    
   },
   {
     path: 'event/:name',
