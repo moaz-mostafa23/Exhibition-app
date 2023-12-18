@@ -89,5 +89,9 @@ export class Tab3Page implements OnInit, OnDestroy {
         this.navCtrl.navigateForward("/edit-profile");
                }
 
+      viewAddAdmin(){
+        this.navCtrl.navigateForward("/add-admin");
+               }
+
 
 }

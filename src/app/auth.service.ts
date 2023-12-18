@@ -95,25 +95,28 @@ userLoggedIn = new BehaviorSubject<boolean>(false);
       uid: user.uid,
     });
   }
-  // async updateProfile(user: any): Promise<void> {
-  //   try {
-  //     const currentUser = await this.auth.currentUser;
-  //     const usersRef = collection(this.firestore, 'users');
-  //     const q = query(usersRef, where('uid', '==', currentUser.uid));
-  //     const snapshot = await getDocs(q);
+  async updateProfile(user: any): Promise<void> {
+    try {
+      const currentUser = await this.auth.currentUser;
+      if (!currentUser) {
+        throw new Error('User not found');
+      }
+      const usersRef = collection(this.firestore, 'users');
+      const q = query(usersRef, where('uid', '==', currentUser.uid));
+      const snapshot = await getDocs(q);
   
-  //     if (snapshot.docs.length === 0) {
-  //       throw new Error('User not found');
-  //     }
+      if (snapshot.docs.length === 0) {
+        throw new Error('User not found');
+      }
   
-  //     const doc = snapshot.docs[0];
-  //     const docId = doc.id;
-  //     await this.crud.updateDocument('users', docId, user);
-  //   } catch (error) {
-  //     console.error('Error updating user profile:', error);
-  //     throw error;
-  //   }
-  // }
+      const doc = snapshot.docs[0];
+      const docId = doc.id;
+      await this.crud.updateDocument('users', docId, user);
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      throw error;
+    }
+  }
   
     
 

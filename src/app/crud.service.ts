@@ -46,6 +46,7 @@ export class CrudService {
     }
   }
 
+
   // Get all documents from a collection as an Observable
   getDocuments<T>(collectionName: string): Observable<T[]> {
     try {

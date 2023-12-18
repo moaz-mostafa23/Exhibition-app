@@ -17,6 +17,11 @@ const routes: Routes = [
   },
   {
     path: 'edit-profile',
+    loadChildren: () => import('./edit-profile/edit-profile.module').then( m => m.EditProfilePageModule)
+  },
+  {
+    path: 'add-admin',
+    loadChildren: () => import('./add-admin/add-admin.module').then( m => m.AddAdminPageModule)
     loadChildren: () => import('./edit-profile/edit-profile.module').then(m => m.EditProfilePageModule)
   },
   {
@@ -30,6 +35,7 @@ const routes: Routes = [
   {
     path: 'hall-modal',
     loadChildren: () => import('./hall-modal/hall-modal.module').then(m => m.HallModalPageModule)
+
   }
 
 
