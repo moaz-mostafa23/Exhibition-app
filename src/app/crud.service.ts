@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Firestore } from '@angular/fire/firestore';
-import { collection, collectionData, doc, addDoc, getDoc, updateDoc, deleteDoc, getDocs, DocumentReference } from '@angular/fire/firestore';
-import { DocumentData } from 'firebase/firestore';
+import { collection, collectionData, query, doc, addDoc, getDoc, updateDoc, deleteDoc, getDocs, DocumentReference } from '@angular/fire/firestore';
+import { DocumentData, where } from 'firebase/firestore';
 import { Observable, of } from 'rxjs';
 
 
@@ -15,6 +15,7 @@ export interface Event {
   start_date: string;
   status: string;
   hall_name: void;
+  description: string;
 }
 
 export interface Hall {
@@ -103,5 +104,21 @@ export class CrudService {
     } catch (error) {
       console.error("Error deleting collection: ", error);
     }
+  }
+
+  async getEventDetails(eventName : string) : Promise<DocumentData>{
+    let myDoc : DocumentData = {} as Event;
+    try{
+      const collectionRef = collection(this.firestore, 'events');
+      const q = query(collectionRef, where("name", "==", eventName));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // console.log(doc.id, " => ", doc.data());
+        myDoc = doc.data();
+      });
+    }catch(err){
+      console.log(err);
+    }
+    return myDoc;
   }
 }
