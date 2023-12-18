@@ -15,6 +15,8 @@ export class UtilityService {
     return decodeURIComponent(escape(atob(base64)));
   }
 
-
+  convertFirebaseTimestamp(timestamp: any): Date {
+    return new Date(timestamp.seconds * 1000 + (timestamp.nanoseconds / 1000000));  
+  }
 
 }
