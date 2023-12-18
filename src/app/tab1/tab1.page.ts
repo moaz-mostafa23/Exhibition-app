@@ -8,6 +8,7 @@ import { Event, Hall } from '../crud.service';
 import { UtilityService } from '../utility.service';
 import { HallModalPage } from '../hall-modal/hall-modal.page';
 import { firstValueFrom } from 'rxjs';
+import { HallEditModalPage } from '../hall-edit-modal/hall-edit-modal.page';
 
 @Component({
   selector: 'app-tab1',
@@ -47,7 +48,7 @@ export class Tab1Page implements OnInit, OnDestroy {
   async ngOnInit() {
     this.authService.userLoggedIn.subscribe(async () => {
       const loading = await this.loadingController.create({
-        message: 'Loading user information...',
+        message: 'Loading Home page...',
       });
       await loading.present();
       try {
@@ -142,7 +143,7 @@ export class Tab1Page implements OnInit, OnDestroy {
   async deleteHall(hallName: string) {
     try {
       // Call your CRUD service to delete the hall by its ID
-      await this.crudService.deleteDocument('halls', hallName);
+      await this.crudService.deleteDocumentByQuery('halls', 'name', hallName);
       // Optionally, update the local halls array to reflect the deletion immediately
       this.halls = this.halls.filter((hall) => hall.name !== hallName);
     } catch (error) {
@@ -216,6 +217,33 @@ export class Tab1Page implements OnInit, OnDestroy {
       this.hallsCopy = this.hallsCopy.filter((hall) => {
         return (hall.name.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1);
       });
+    }
+  }
+  async editHall(hall: Hall) {
+    try {
+      const modal = await this.modalController.create({
+        component: HallEditModalPage,
+        componentProps: { editedHall: hall },
+      });
+
+      await modal.present();
+
+      // Wait for the modal to be dismissed
+      const { data } = await modal.onDidDismiss();
+
+      // Check if any data was returned from the modal (e.g., updated hall)
+      if (data && data.updatedHall) {
+        // Perform any necessary actions based on the returned data
+        console.log('Hall updated:', data.updatedHall);
+
+        // Optionally, update the local halls array to reflect the changes
+        const updatedHallIndex = this.halls.findIndex((h) => h.name === data.updatedHall.name);
+        if (updatedHallIndex !== -1) {
+          this.halls[updatedHallIndex] = data.updatedHall;
+        }
+      }
+    } catch (error) {
+      console.error('Error opening Hall Edit Modal', error);
     }
   }
 }

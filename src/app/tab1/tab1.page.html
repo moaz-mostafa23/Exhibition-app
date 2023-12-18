@@ -103,7 +103,6 @@
     <ion-list>
           <ion-card 
           *ngFor="let hall of this.hallsCopy"
-          routerLink="/hall/{{hall.name}}" routerDirection="forward"
           >
             <!-- <img src="{{hall.picture[0]}}" alt="Event Picture"> -->
             <img src="https://placehold.co/600x400" alt="Hall Picture">
@@ -123,6 +122,9 @@
             routerLink="/hall/{{hall.name}}" routerDirection="forward"
             >
               Learn More
+            </ion-button>
+            <ion-button (click)="editHall(hall)" color="primary" size="small" slot="start">
+              <ion-icon name="create"></ion-icon> Edit
             </ion-button>
               <ion-button (click)="deleteHall(hall.name)"             color="primary" 
               size="small" 

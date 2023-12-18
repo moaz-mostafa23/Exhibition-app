@@ -17,12 +17,12 @@ const routes: Routes = [
   },
   {
     path: 'edit-profile',
-    loadChildren: () => import('./edit-profile/edit-profile.module').then( m => m.EditProfilePageModule)
+    loadChildren: () => import('./edit-profile/edit-profile.module').then(m => m.EditProfilePageModule)
   },
   {
     path: 'add-admin',
-    loadChildren: () => import('./add-admin/add-admin.module').then( m => m.AddAdminPageModule)
-    
+    loadChildren: () => import('./add-admin/add-admin.module').then(m => m.AddAdminPageModule)
+
   },
   {
     path: 'event/:name',
@@ -36,6 +36,10 @@ const routes: Routes = [
     path: 'hall-modal',
     loadChildren: () => import('./hall-modal/hall-modal.module').then(m => m.HallModalPageModule)
 
+  },
+  {
+    path: 'hall-edit-modal',
+    loadChildren: () => import('./hall-edit-modal/hall-edit-modal.module').then(m => m.HallEditModalPageModule)
   }
 
 
