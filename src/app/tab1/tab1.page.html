@@ -94,4 +94,48 @@
   </div>
   <!-- End of client Screen -->
 
+   <!-- Start of admin screen -->
+   <div *ngIf="user && user.userType === 'admin'">
+    <ion-button expand="block" (click)="openHallModal()" >Add New Hall</ion-button>
+
+    <ion-searchbar (ionInput)="searchHalls($event)"></ion-searchbar>
+    <!-- attendee.user@email.com, pass: admin123 -->
+    <ion-list>
+          <ion-card 
+          *ngFor="let hall of this.hallsCopy"
+          >
+            <!-- <img src="{{hall.picture[0]}}" alt="Event Picture"> -->
+            <img src="https://placehold.co/600x400" alt="Hall Picture">
+            <ion-card-header>
+            <ion-card-title>{{hall.name}}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p><b>Capacity:</b> {{hall.capacity}}</p>
+            <p><b>Booth Fiting:</b> {{hall.booth_fiting}}</p>
+              
+            <p><b>Contact:</b> {{hall.contact_info}}</p>
+            
+            <ion-button 
+            color="primary" 
+            size="small" 
+            slot="start"
+            routerLink="/hall/{{hall.name}}" routerDirection="forward"
+            >
+              Learn More
+            </ion-button>
+            <ion-button (click)="editHall(hall)" color="primary" size="small" slot="start">
+              <ion-icon name="create"></ion-icon> Edit
+            </ion-button>
+              <ion-button (click)="deleteHall(hall.name)"             color="primary" 
+              size="small" 
+              slot="start" color="danger">
+                <ion-icon name="trash"></ion-icon> Delete
+              </ion-button>
+          </ion-card-content>
+            </ion-card>
+        </ion-list>
+  </div>
+  <!-- End of admin Screen -->
+
+
 </ion-content>
