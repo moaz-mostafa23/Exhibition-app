@@ -30,8 +30,6 @@
     <ion-searchbar (ionInput)="searchEvents($event)"></ion-searchbar>
     <!-- attendee.user@email.com, pass: admin123 -->
     <ion-list>
-      
-       
           <ion-card 
           *ngFor="let event of this.eventsCopy"
           routerLink="/event/{{event.name}}" routerDirection="forward"
@@ -48,26 +46,52 @@
             <p><b>Hall:</b> {{event.hall_name}}</p> 
             <p><b>Status:</b> {{event.status}}</p>
 
+              <ion-button 
+              color="primary" 
+              size="small" 
+              slot="start"
+              routerLink="/event/{{event.name}}" routerDirection="forward"
+              >
+              Learn More
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-list>
+  </div>
+  <!-- End of Attendee Screen  -->
+
+  <!-- Start of client screen -->
+  <div *ngIf="userType=='client'">
+    <ion-searchbar (ionInput)="searchHalls($event)"></ion-searchbar>
+    <!-- attendee.user@email.com, pass: admin123 -->
+    <ion-list>
+          <ion-card 
+          *ngFor="let hall of this.hallsCopy"
+          routerLink="/hall/{{hall.name}}" routerDirection="forward"
+          >
+            <!-- <img src="{{hall.picture[0]}}" alt="Event Picture"> -->
+            <img src="https://placehold.co/600x400" alt="Hall Picture">
+            <ion-card-header>
+            <ion-card-title>{{hall.name}}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <!-- dates should not be timestamps -->
+            <p><b>Capacity:</b> {{hall.capacity}}</p>
+            <p><b>Booth Fiting:</b> {{hall.booth_fiting}}</p>
+            <!--  should be hall name -->
+            <p><b>Contact:</b> {{hall.contact_info}}</p>
+            
             <ion-button 
             color="primary" 
             size="small" 
             slot="start"
-            routerLink="/event/{{event.name}}" routerDirection="forward"
+            routerLink="/hall/{{hall.name}}" routerDirection="forward"
             >
               Learn More
             </ion-button>
           </ion-card-content>
             </ion-card>
         </ion-list>
-          
-          
-          
-  </div>
-  <!-- End of Attendee Screen  -->
-
-  <!-- Start of client screen -->
-  <div *ngIf="userType=='client'">
-  
   </div>
   <!-- End of client Screen -->
 
