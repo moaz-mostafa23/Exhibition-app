@@ -22,7 +22,12 @@ const routes: Routes = [
   {
     path: 'event/:name',
     loadChildren: () => import('./event/event.module').then( m => m.EventPageModule)
+  },
+  {
+    path: 'hall/:name',
+    loadChildren: () => import('./hall/hall.module').then( m => m.HallPageModule)
   }
+
 
 
 ];
