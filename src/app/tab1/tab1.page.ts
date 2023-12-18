@@ -17,7 +17,7 @@ import { firstValueFrom } from 'rxjs';
 
 export class Tab1Page implements OnInit, OnDestroy {
   user: any;
-  halls: any
+  // halls: any
   private auth: Auth | any;
   userType: string = '';
 
@@ -25,7 +25,7 @@ export class Tab1Page implements OnInit, OnDestroy {
   // we will get from the observable. This will help us when filtering search results of the user.
   eventsCopy: Event[] = [] as Event[]; // this list will be used to store the original data from the observable.
 
-  // halls : Hall[] = {} as Hall[];
+  halls: Hall[] = {} as Hall[];
   hallsCopy: Hall[] = {} as Hall[];
 
 
@@ -54,8 +54,8 @@ export class Tab1Page implements OnInit, OnDestroy {
         const isLoggedIn = await this.authService.isLoggedIn();
         if (isLoggedIn) {
           this.user = await this.authService.getUserData();
-          const documents$ = this.crudService.getDocuments('halls'); // Update to halls
-          this.halls = await firstValueFrom(documents$);
+          // const documents$ = this.crudService.getDocuments('halls'); // Update to halls
+          // this.halls = await firstValueFrom(documents$);
 
           console.log('halls', this.halls);
 
@@ -63,7 +63,7 @@ export class Tab1Page implements OnInit, OnDestroy {
           this.userType = this.user.userType;
 
           // loading user's home page data
-          if (this.userType == 'client')
+          if (this.userType == 'client' || this.userType == 'admin')
             await this.getHalls();
           else if (this.userType == 'attendee')
             await this.getEvents();
@@ -139,12 +139,12 @@ export class Tab1Page implements OnInit, OnDestroy {
     }
   }
 
-  async deleteHall(hallId: string) {
+  async deleteHall(hallName: string) {
     try {
       // Call your CRUD service to delete the hall by its ID
-      await this.crudService.deleteDocument('halls', hallId);
+      await this.crudService.deleteDocument('halls', hallName);
       // Optionally, update the local halls array to reflect the deletion immediately
-      this.halls = this.halls.filter((hall: { id: string; }) => hall.id !== hallId);
+      this.halls = this.halls.filter((hall) => hall.name !== hallName);
     } catch (error) {
       console.error('Error deleting hall:', error);
     }
