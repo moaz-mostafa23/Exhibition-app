@@ -4,10 +4,15 @@ import { collection, collectionData, doc, addDoc, getDoc, updateDoc, deleteDoc, 
 import { DocumentData } from 'firebase/firestore';
 import { Observable, of } from 'rxjs';
 
+
 @Injectable({
   providedIn: 'root'
 })
 export class CrudService {
+
+  public events$: Observable<DocumentData[]> = this.getDocuments('events');
+
+
   constructor(private firestore: Firestore) { }
 
   // Create a new document in a collection
@@ -21,10 +26,10 @@ export class CrudService {
   }
 
   // Get all documents from a collection as an Observable
-  getDocuments(collectionName: string): Observable<DocumentData[]> {
+  getDocuments<T>(collectionName: string): Observable<T[]> {
     try {
       const collectionRef = collection(this.firestore, collectionName);
-      return collectionData(collectionRef, { idField: 'id' }); // Optionally specify an ID field
+      return collectionData(collectionRef, { idField: 'id' }) as Observable<T[]>; // Optionally specify an ID field
     } catch (error) {
       console.error("Error getting documents: ", error);
       return of([]);
