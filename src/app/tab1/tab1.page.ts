@@ -30,6 +30,7 @@ export class Tab1Page implements OnInit, OnDestroy {
     public crudService : CrudService,
     public alertController : AlertController,
     public utilityService : UtilityService,
+    public navController : NavController,
   ) {
     
 
@@ -78,18 +79,14 @@ export class Tab1Page implements OnInit, OnDestroy {
         this.eventsCopy = events as Event[];
       
         this.events.forEach(element => {
-          element.start_date = this.utilityService.convertFirebaseTimestamp(element.start_date).toDateString() + "\t-\t" + this.utilityService.convertFirebaseTimestamp(element.start_date).toLocaleTimeString();
-          element.end_date = this.utilityService.convertFirebaseTimestamp(element.end_date).toDateString() + "\t-\t" + this.utilityService.convertFirebaseTimestamp(element.end_date).toLocaleTimeString();
-          // TODO: back to it later
-          // element.hall_name = this.getHallName(element.hall_id);
+          element.start_date = this.utilityService.convertFirebaseTimestamp(element.start_date);
+          element.end_date = this.utilityService.convertFirebaseTimestamp(element.end_date); 
         });
 
         // same for the eventsCopy
         this.eventsCopy.forEach(element => {
-          element.start_date = this.utilityService.convertFirebaseTimestamp(element.start_date).toDateString() + "\t-\t" + this.utilityService.convertFirebaseTimestamp(element.start_date).toLocaleTimeString();
-          element.end_date = this.utilityService.convertFirebaseTimestamp(element.end_date).toDateString() + "\t-\t" + this.utilityService.convertFirebaseTimestamp(element.end_date).toLocaleTimeString();
-          // TODO: back to it later
-          // element.hall_name = this.getHallName(element.hall_id);
+          element.start_date = this.utilityService.convertFirebaseTimestamp(element.start_date);
+          element.end_date = this.utilityService.convertFirebaseTimestamp(element.end_date); 
         });
 
         console.log(this.events);

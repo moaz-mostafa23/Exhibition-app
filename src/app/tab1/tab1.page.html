@@ -34,7 +34,7 @@
        
           <ion-card 
           *ngFor="let event of this.eventsCopy"
-          routerLink="" routerDirection="forward"
+          routerLink="/event/{{event.name}}" routerDirection="forward"
           >
             <img src="{{event.picture[0]}}" alt="Event Picture">
             <ion-card-header>
@@ -52,7 +52,7 @@
             color="primary" 
             size="small" 
             slot="start"
-            routerLink="" routerDirection="forward"
+            routerLink="/event/{{event.name}}" routerDirection="forward"
             >
               Learn More
             </ion-button>
