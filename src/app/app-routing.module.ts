@@ -30,6 +30,10 @@ const routes: Routes = [
   {
     path: 'hall-modal',
     loadChildren: () => import('./hall-modal/hall-modal.module').then(m => m.HallModalPageModule)
+  },
+  {
+    path: 'hall-edit-modal',
+    loadChildren: () => import('./hall-edit-modal/hall-edit-modal.module').then( m => m.HallEditModalPageModule)
   }
 
 

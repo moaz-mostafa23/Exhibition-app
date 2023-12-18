@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Firestore } from '@angular/fire/firestore';
-import { collection, collectionData, doc, addDoc, getDoc, updateDoc, deleteDoc, getDocs, DocumentReference } from '@angular/fire/firestore';
-import { DocumentData } from 'firebase/firestore';
+import { Firestore, where } from '@angular/fire/firestore';
+import { collection, collectionData, doc, addDoc, getDoc, updateDoc, deleteDoc, getDocs, DocumentReference, QuerySnapshot } from '@angular/fire/firestore';
+import { DocumentData, query } from 'firebase/firestore';
 import { Observable, of } from 'rxjs';
 
 
@@ -36,11 +36,15 @@ export class CrudService {
 
   constructor(private firestore: Firestore) { }
 
-  // Create a new document in a collection
   async createDocument(collectionName: string, data: any): Promise<DocumentReference<DocumentData> | any> {
     try {
       const collectionRef = collection(this.firestore, collectionName);
-      return await addDoc(collectionRef, data);
+      const docRef = await addDoc(collectionRef, data);
+
+      // Access the generated document ID
+      console.log('Document ID:', docRef.id);
+
+      return docRef;
     } catch (error) {
       console.error("Error creating document: ", error);
     }
@@ -79,6 +83,30 @@ export class CrudService {
       await updateDoc(documentRef, data);
     } catch (error) {
       console.error("Error updating document: ", error);
+      throw error;
+    }
+  }
+
+  // Update a document based on a query
+  async updateDocumentByQuery(collectionName: string, field: string, value: any, newData: any): Promise<void> {
+    try {
+      // Create a query to find the document based on the specified field and value
+      const q = query(collection(this.firestore, collectionName), where(field, '==', value));
+
+      // Execute the query
+      const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
+
+      // Iterate through the results and update each document
+      querySnapshot.forEach(async (doc) => {
+        const documentRef: DocumentReference<DocumentData> = doc.ref;
+
+        // Use the updateDoc function to update the document
+        await updateDoc(documentRef, newData);
+
+        console.log('Document updated successfully');
+      });
+    } catch (error) {
+      console.error("Error updating document by query: ", error);
     }
   }
 
@@ -89,6 +117,29 @@ export class CrudService {
       await deleteDoc(documentRef);
     } catch (error) {
       console.error("Error deleting document: ", error);
+    }
+  }
+
+  // Delete a document based on a query
+  async deleteDocumentByQuery(collectionName: string, field: string, value: any): Promise<void> {
+    try {
+      // Create a query to find the document based on the specified field and value
+      const q = query(collection(this.firestore, collectionName), where(field, '==', value));
+
+      // Execute the query
+      const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
+
+      // Iterate through the results and delete each document
+      querySnapshot.forEach(async (doc) => {
+        const documentRef: DocumentReference<DocumentData> = doc.ref;
+
+        // Use the deleteDoc function to delete the document
+        await deleteDoc(documentRef);
+
+        console.log('Document deleted successfully');
+      });
+    } catch (error) {
+      console.error("Error deleting document by query: ", error);
     }
   }
 
