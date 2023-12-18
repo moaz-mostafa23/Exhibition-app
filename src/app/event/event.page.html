@@ -3,7 +3,7 @@
     <ion-buttons>
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>event</ion-title>
+    <ion-title>{{this.eventName}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,4 +14,14 @@
     </ion-toolbar>
   </ion-header>
 
+  <img src="https://placehold.co/600x400" alt="">
+  <br>
+  {{this.event.description}} <br>
+  
+  {{this.event.status}} <br>
+  {{this.event.hall_name}} <br>
+  {{this.event.start_date}} <br>
+  {{this.event.end_date}} <br>
+
+  <ion-button color="success" (click)="registerEvent()">REGISTER</ion-button>
 </ion-content>
