@@ -36,7 +36,11 @@ const routes: Routes = [
     path: 'hall-modal',
     loadChildren: () => import('./hall-modal/hall-modal.module').then(m => m.HallModalPageModule)
 
+  },  {
+    path: 'edit-admin',
+    loadChildren: () => import('./edit-admin/edit-admin.module').then( m => m.EditAdminPageModule)
   }
+
 
 
 
