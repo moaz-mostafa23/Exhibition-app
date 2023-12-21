@@ -15,7 +15,7 @@
 
 
 
-  <ion-accordion-group *ngIf="registeredEventsObj">
+  <ion-accordion-group *ngIf="registeredEventsObj && user.userType === 'attendee'">
     <ion-accordion *ngFor="let event of registeredEventsObj; let i=index">
       <ion-item slot="header" color="light">
         <ion-label>{{event.name}}</ion-label>
