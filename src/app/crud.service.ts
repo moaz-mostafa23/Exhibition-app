@@ -156,4 +156,95 @@ export class CrudService {
       console.error("Error deleting collection: ", error);
     }
   }
+
+  async getDocumentIdByUniqueKey(collectionName: string, uniqueKey:string ,value: string): Promise<string | null> {
+    try {
+      const collectionRef = collection(this.firestore, collectionName);
+      const q = query(collectionRef, where(uniqueKey, '==', value));
+      const snapshot = await getDocs(q);
+  
+      if (snapshot.docs.length > 0) {
+        return snapshot.docs[0].id; // Get the ID of the first document matching the name
+      } else {
+        return null; // No document found with the given name
+      }
+    } catch (error) {
+      console.error(`Error getting document ID: ${error}`);
+      return null;
+    }
+  }
+
+  async getRegisteredEventsByAttendeeId(attendeeId: string): Promise<DocumentData[]> {
+    try {
+      // Create a query to find the documents based on the attendee_id
+      const q = query(collection(this.firestore, 'registeredEvents'), where('attendee_id', '==', attendeeId));
+  
+      // Execute the query
+      const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
+  
+      // Create an array to store the event data
+      let events: DocumentData[] = [];
+  
+      // Iterate through the results and add each event data to the array
+      querySnapshot.forEach((doc) => {
+        events.push(doc.data() as DocumentData);
+      });
+  
+      return events;
+    } catch (error) {
+      console.error("Error getting registered events by attendee ID: ", error);
+      return [];
+    }
+  }
+
+  async getEventsByIds(eventIds: string[]): Promise<DocumentData[]> {
+    try {
+      // Create an array to store the event data
+      let events: DocumentData[] = [];
+  
+      // Iterate through the array of event IDs
+      for (const eventId of eventIds) {
+        // Get the event data for each ID
+        const eventData = await this.getDocumentById('events', eventId);
+  
+        // If the event data exists, add it to the array
+        if (eventData) {
+          events.push(eventData);
+        }
+      }
+  
+      return events;
+    } catch (error) {
+      console.error("Error getting events by IDs: ", error);
+      return [];
+    }
+  }
+
+  async deleteRegisteredEvent(eventId: string, attendeeId: string): Promise<void> {
+    try {
+      // Create a query to find the document based on the eventId and attendeeId
+      const q = query(collection(this.firestore, 'registeredEvents'), where('event_id', '==', eventId), where('attendee_id', '==', attendeeId));
+  
+      // Execute the query
+      const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
+  
+      // Iterate through the results and delete each document
+      querySnapshot.forEach(async (doc) => {
+        const documentRef: DocumentReference<DocumentData> = doc.ref;
+  
+        // Use the deleteDoc function to delete the document
+        await deleteDoc(documentRef);
+  
+        console.log('Document deleted successfully');
+      });
+    } catch (error) {
+      console.error("Error deleting registered event: ", error);
+    }
+  }
+  
+  
+
+
+  
+
 }

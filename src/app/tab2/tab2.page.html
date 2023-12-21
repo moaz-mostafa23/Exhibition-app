@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Tab 2
+    <ion-title  *ngIf="user">
+      {{ user.userType === 'attendee' ? 'Registered Events' : (user.userType === 'admin' ? 'Admin' : (user.userType === 'client' ? 'Client' : 'Tab 2')) }}
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,10 +9,29 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
+      <ion-title size="large" *ngIf="user">{{ user.userType === 'attendee' ? 'Registered Events' : (user.userType === 'admin' ? 'Admin' : (user.userType === 'client' ? 'Client' : 'Tab 2')) }}</ion-title>
     </ion-toolbar>
   </ion-header>
-  
-  
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+
+
+
+  <ion-accordion-group *ngIf="registeredEventsObj">
+    <ion-accordion *ngFor="let event of registeredEventsObj; let i=index">
+      <ion-item slot="header" color="light">
+        <ion-label>{{event.name}}</ion-label>
+      </ion-item>
+      <ion-card slot="content">
+        <ion-card-header>
+          <ion-card-title>{{event.name}}</ion-card-title>
+          <ion-card-subtitle>Status: <ion-button  size="small" [color]="event.status === 'pending' ? 'warning' : (event.status === 'approved' ? 'success' : (event.status === 'not approved' ? 'danger' : 'danger'))">{{event.status}}</ion-button></ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-img [src]="event.picture[0]"></ion-img>
+          <ion-button size="small" (click)="deleteRegisteredEvent(event.name)" color="danger">Cancel</ion-button>
+        </ion-card-content>
+      </ion-card>
+      
+    </ion-accordion>
+    <!-- Repeat for other accordions -->
+  </ion-accordion-group>
 </ion-content>
