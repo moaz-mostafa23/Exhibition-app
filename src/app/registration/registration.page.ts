@@ -36,6 +36,7 @@ export class RegistrationPage  {
       return !regex.test(password) ? { invalidPassword: true} : null;
   };
 }
+
 confirmPasswordValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     if (!this.myForm) {

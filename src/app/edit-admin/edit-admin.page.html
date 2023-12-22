@@ -1,0 +1,36 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>editAdmin</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
+    <!-- <ion-buttons slot="end">
+      <ion-menu-button>Edit</ion-menu-button>
+      <ion-menu-button>Delete</ion-menu-button>
+    </ion-buttons> -->
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <ion-list *ngFor="let user of (users$ | async) as users">
+    <ion-item >
+      <ion-input  [(ngModel)]="user.email"></ion-input>
+    </ion-item>  
+    <ion-item>
+      <ion-input [(ngModel)]="user.firstName"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input [(ngModel)]="user.lastName" ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input [(ngModel)]="user.phone"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-button (click)="editAdmin(user)">Update</ion-button>
+      <ion-button (click)="deleteAdmin(user)">Delete</ion-button>
+    </ion-item>
+    
+  </ion-list>
+
+</ion-content>
