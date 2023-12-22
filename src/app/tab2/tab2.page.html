@@ -1,15 +1,22 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title  *ngIf="user">
-      {{ user.userType === 'attendee' ? 'Registered Events' : (user.userType === 'admin' ? 'Admin' : (user.userType === 'client' ? 'Client' : 'Tab 2')) }}
+      {{ user.userType === 'attendee' ? 'Registered Events' : (user.userType === 'admin' ? 'Admin' : (user.userType === 'client' ? 'Created Events' : '')) }}
     </ion-title>
+    <ion-buttons *ngIf="user && user.userType === 'client'" slot="end">
+      <ion-button>
+        Add Event
+      </ion-button>
+   
+
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large" *ngIf="user">{{ user.userType === 'attendee' ? 'Registered Events' : (user.userType === 'admin' ? 'Admin' : (user.userType === 'client' ? 'Client' : 'Tab 2')) }}</ion-title>
+      <ion-title size="large" *ngIf="user">{{ user.userType === 'attendee' ? 'Registered Events' : (user.userType === 'admin' ? 'Admin' : (user.userType === 'client' ? 'Created Events' : '')) }}</ion-title>
     </ion-toolbar>
   </ion-header>
 
@@ -30,8 +37,26 @@
           <ion-button size="small" (click)="deleteRegisteredEvent(event.name)" color="danger">Cancel</ion-button>
         </ion-card-content>
       </ion-card>
-      
     </ion-accordion>
-    <!-- Repeat for other accordions -->
   </ion-accordion-group>
+
+
+  <ion-accordion-group *ngIf="createdEvents && user.userType === 'client'">
+    <ion-accordion *ngFor="let event of createdEvents; let i=index">
+      <ion-item slot="header" color="light">
+        <ion-label>{{event.name}}</ion-label>
+      </ion-item>
+      <ion-card slot="content">
+        <ion-card-header>
+          <ion-card-title>{{event.name}}</ion-card-title>
+          <ion-card-subtitle>Status: <ion-button  size="small" [color]="event.status === 'pending' ? 'warning' : (event.status === 'approved' ? 'success' : (event.status === 'not approved' ? 'danger' : 'danger'))">{{event.status}}</ion-button></ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-img [src]="event.picture[0]"></ion-img>
+        </ion-card-content>
+      </ion-card>
+    </ion-accordion>
+  </ion-accordion-group>
+
+
 </ion-content>

@@ -174,10 +174,10 @@ export class CrudService {
     }
   }
 
-  async getRegisteredEventsByAttendeeId(attendeeId: string): Promise<DocumentData[]> {
+  async getRegisterationByAttendeeId(attendeeId: string): Promise<DocumentData[]> {
     try {
       // Create a query to find the documents based on the attendee_id
-      const q = query(collection(this.firestore, 'registeredEvents'), where('attendee_id', '==', attendeeId));
+      const q = query(collection(this.firestore, 'registrations'), where('attendee_id', '==', attendeeId));
   
       // Execute the query
       const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
@@ -220,10 +220,10 @@ export class CrudService {
     }
   }
 
-  async deleteRegisteredEvent(eventId: string, attendeeId: string): Promise<void> {
+  async deleteRegisteration(eventId: string, attendeeId: string): Promise<void> {
     try {
       // Create a query to find the document based on the eventId and attendeeId
-      const q = query(collection(this.firestore, 'registeredEvents'), where('event_id', '==', eventId), where('attendee_id', '==', attendeeId));
+      const q = query(collection(this.firestore, 'registrations'), where('event_id', '==', eventId), where('attendee_id', '==', attendeeId));
   
       // Execute the query
       const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
@@ -241,6 +241,30 @@ export class CrudService {
       console.error("Error deleting registered event: ", error);
     }
   }
+
+  async getEventsByClientId(clientId: string): Promise<DocumentData[]> {
+    try {
+      // Create a query to find the documents based on the client_id
+      const q = query(collection(this.firestore, 'events'), where('client_id', '==', clientId));
+  
+      // Execute the query
+      const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
+  
+      // Create an array to store the event data
+      let events: DocumentData[] = [];
+  
+      // Iterate through the results and add each event data to the array
+      querySnapshot.forEach((doc) => {
+        events.push(doc.data() as DocumentData);
+      });
+  
+      return events;
+    } catch (error) {
+      console.error("Error getting events by client ID: ", error);
+      return [];
+    }
+  }
+  
   
   
 
