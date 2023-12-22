@@ -18,7 +18,6 @@ import { HallEditModalPage } from '../hall-edit-modal/hall-edit-modal.page';
 
 export class Tab1Page implements OnInit, OnDestroy {
   user: any;
-  // halls: any
   private auth: Auth | any;
   userType: string = '';
 

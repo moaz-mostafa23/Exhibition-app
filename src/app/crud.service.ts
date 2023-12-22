@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Firestore, where } from '@angular/fire/firestore';
 import { collection, collectionData, doc, addDoc, getDoc, updateDoc, deleteDoc, getDocs, DocumentReference, QuerySnapshot } from '@angular/fire/firestore';
-import { DocumentData, query } from 'firebase/firestore';
+import { DocumentData, Query, query } from 'firebase/firestore';
 import { Observable, of } from 'rxjs';
 
 
@@ -62,6 +62,27 @@ export class CrudService {
     }
   }
 
+  async getDocumentByQuery(collectionName: string, field: string, value: any): Promise<DocumentData | null> {
+    try {
+      // Create a query to find the document based on the specified field and value
+      const q = query(collection(this.firestore, collectionName), where(field, '==', value));
+
+      // Execute the query
+      const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
+
+      // If there is a document matching the query, return its data
+      if (querySnapshot.docs.length > 0) {
+        const documentData = querySnapshot.docs[0].data() as DocumentData;
+        return documentData;
+      } else {
+        return null; // No document found with the specified query
+      }
+    } catch (error) {
+      console.error("Error getting document by query: ", error);
+      throw error;
+    }
+  }
+
   // Get a specific document by its ID
   async getDocumentById(collectionName: string, documentId: string): Promise<DocumentData | any> {
     try {
@@ -76,6 +97,7 @@ export class CrudService {
       console.error("Error getting document: ", error);
     }
   }
+
 
   // Update a document by its ID
   async updateDocument(collectionName: string, documentId: string, data: any): Promise<void> {
@@ -157,12 +179,12 @@ export class CrudService {
     }
   }
 
-  async getDocumentIdByUniqueKey(collectionName: string, uniqueKey:string ,value: string): Promise<string | null> {
+  async getDocumentIdByUniqueKey(collectionName: string, uniqueKey: string, value: string): Promise<string | null> {
     try {
       const collectionRef = collection(this.firestore, collectionName);
       const q = query(collectionRef, where(uniqueKey, '==', value));
       const snapshot = await getDocs(q);
-  
+
       if (snapshot.docs.length > 0) {
         return snapshot.docs[0].id; // Get the ID of the first document matching the name
       } else {
@@ -178,18 +200,18 @@ export class CrudService {
     try {
       // Create a query to find the documents based on the attendee_id
       const q = query(collection(this.firestore, 'registrations'), where('attendee_id', '==', attendeeId));
-  
+
       // Execute the query
       const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
-  
+
       // Create an array to store the event data
       let events: DocumentData[] = [];
-  
+
       // Iterate through the results and add each event data to the array
       querySnapshot.forEach((doc) => {
         events.push(doc.data() as DocumentData);
       });
-  
+
       return events;
     } catch (error) {
       console.error("Error getting registered events by attendee ID: ", error);
@@ -201,18 +223,18 @@ export class CrudService {
     try {
       // Create an array to store the event data
       let events: DocumentData[] = [];
-  
+
       // Iterate through the array of event IDs
       for (const eventId of eventIds) {
         // Get the event data for each ID
         const eventData = await this.getDocumentById('events', eventId);
-  
+
         // If the event data exists, add it to the array
         if (eventData) {
           events.push(eventData);
         }
       }
-  
+
       return events;
     } catch (error) {
       console.error("Error getting events by IDs: ", error);
@@ -224,17 +246,17 @@ export class CrudService {
     try {
       // Create a query to find the document based on the eventId and attendeeId
       const q = query(collection(this.firestore, 'registrations'), where('event_id', '==', eventId), where('attendee_id', '==', attendeeId));
-  
+
       // Execute the query
       const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
-  
+
       // Iterate through the results and delete each document
       querySnapshot.forEach(async (doc) => {
         const documentRef: DocumentReference<DocumentData> = doc.ref;
-  
+
         // Use the deleteDoc function to delete the document
         await deleteDoc(documentRef);
-  
+
         console.log('Document deleted successfully');
       });
     } catch (error) {
@@ -246,29 +268,29 @@ export class CrudService {
     try {
       // Create a query to find the documents based on the client_id
       const q = query(collection(this.firestore, 'events'), where('client_id', '==', clientId));
-  
+
       // Execute the query
       const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
-  
+
       // Create an array to store the event data
       let events: DocumentData[] = [];
-  
+
       // Iterate through the results and add each event data to the array
       querySnapshot.forEach((doc) => {
         events.push(doc.data() as DocumentData);
       });
-  
+
       return events;
     } catch (error) {
       console.error("Error getting events by client ID: ", error);
       return [];
     }
   }
-  
-  
-  
 
 
-  
+
+
+
+
 
 }
