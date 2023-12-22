@@ -4,7 +4,7 @@
       {{ user.userType === 'attendee' ? 'Registered Events' : (user.userType === 'admin' ? 'Admin' : (user.userType === 'client' ? 'Created Events' : '')) }}
     </ion-title>
     <ion-buttons *ngIf="user && user.userType === 'client'" slot="end">
-      <ion-button>
+      <ion-button (click)="customEvent()">
         Add Event
       </ion-button>
    

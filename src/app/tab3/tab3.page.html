@@ -18,11 +18,11 @@
       <ion-button expand="full" (click)="viewEdit()">Edit Profile</ion-button>
     </ion-item>
 
-    <ion-item *ngIf="user.userType == 'admin'" lines="none">
+    <ion-item *ngIf="user.userType === 'admin'" lines="none">
       <ion-button expand="full" (click)="viewAddAdmin()">Add Admin</ion-button>
     </ion-item>
 
-    <ion-item *ngIf="user.userType == 'admin'" lines="none">
+    <ion-item *ngIf="user.userType === 'admin'" lines="none">
       <ion-button expand="full" (click)="viewEditAdmin()">Edit Admin</ion-button>
     </ion-item>
 

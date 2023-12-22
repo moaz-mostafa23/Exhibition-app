@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
-import { AlertController, LoadingController, NavController } from '@ionic/angular';
+import { AlertController, LoadingController, NavController, ModalController } from '@ionic/angular';
 import { CrudService } from '../crud.service';
+import { CreateEventPage } from '../create-event/create-event.page';
 
 @Component({
   selector: 'app-tab2',
@@ -16,7 +17,7 @@ export class Tab2Page implements OnInit, OnDestroy {
   userID:any;
   
 
-  constructor(private crud:CrudService,private authService:AuthService, private loading:LoadingController, private navCtrl: NavController, private alertController:AlertController) {
+  constructor(private modal:ModalController,private crud:CrudService,private authService:AuthService, private loading:LoadingController, private navCtrl: NavController, private alertController:AlertController) {
     
   }
 
@@ -79,6 +80,15 @@ async deleteRegisteredEvent(name:string) {
   });
 
   await alert.present();
+}
+
+
+async customEvent(){
+  const modal = await this.modal.create({
+    component: CreateEventPage
+  });
+  modal.onDidDismiss().then(async()=>{await this.ngOnInit()})
+  return await modal.present();
 }
 
 
