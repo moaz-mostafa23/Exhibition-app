@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { Firestore, where } from '@angular/fire/firestore';
 import { collection, collectionData, doc, addDoc, getDoc, updateDoc, deleteDoc, getDocs, DocumentReference, QuerySnapshot } from '@angular/fire/firestore';
 import { DocumentData, Query, query } from 'firebase/firestore';
-import { Observable, of } from 'rxjs';
+import { Observable, of, combineLatest, pipe, from  } from 'rxjs';
+
+import { map } from 'rxjs/operators';
 
 
 export interface Event {
@@ -287,6 +289,33 @@ export class CrudService {
     }
   }
 
+  async isEventReserved(start_date: string, end_date: string, hallId: string): Promise<Observable<string>> {
+    // Convert the start and end dates to JavaScript Date objects
+    const eventStartDate = new Date(start_date);
+    const eventEndDate = new Date(end_date);
+  
+    // Get the hall document from Firestore
+    const hallDoc = this.getDocumentById('halls', hallId);
+  
+    // Combine the event and hall observables
+    return from(hallDoc).pipe(
+      map((hall:any) => {
+        // Convert the hall's start and end dates to JavaScript Date objects
+        const hallStartDate = new Date(hall.start_date);
+        const hallEndDate = new Date(hall.end_date);
+  
+        // Check if the event start and end dates are within the hall's available dates
+        if (eventStartDate >= hallStartDate && eventEndDate <= hallEndDate) {
+          // If there is a conflict, return a message to the user
+          return 'Reserved';
+        } else {
+          // If there is no conflict, the event is not reserved
+          return 'Not reserved';
+        }
+      })
+    );
+  }
+  
 
 
 

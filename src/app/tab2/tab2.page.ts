@@ -4,6 +4,7 @@ import { AlertController, LoadingController, NavController, ModalController } fr
 import { CrudService } from '../crud.service';
 import { CreateEventPage } from '../create-event/create-event.page';
 
+
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
