@@ -35,4 +35,23 @@
               </ion-button>
     </ion-card-content>
   </ion-card>
+  <div>
+    <h1>Reservation History</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Event Name</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let event of events">
+          <td>{{ event.name }}</td>
+          <td>{{ event.start_date }}</td>
+          <td>{{ event.end_date }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </ion-content>
