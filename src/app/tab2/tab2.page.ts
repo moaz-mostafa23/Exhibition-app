@@ -92,6 +92,61 @@ async customEvent(){
   return await modal.present();
 }
 
+async deleteEvent(eventName: string): Promise<void> {
+  try {
+    // Get the event document ID by its unique key 'name'
+    const eventDocId = await this.crud.getDocumentIdByUniqueKey('events', 'name', eventName);
+
+    if (eventDocId) {
+      // Create an alert controller
+      const alert = await this.alertController.create({
+        header: 'Confirm',
+        message: 'Are you sure you want to delete this event?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            handler: () => {
+              console.log('Delete cancelled');
+            }
+          },
+          {
+            text: 'Delete',
+            handler: async () => {
+              // Create a loading controller
+              const loading = await this.loading.create({
+                message: 'Deleting event...'
+              });
+              loading.present();
+
+              // Delete the event document
+              await this.crud.deleteDocument('events', eventDocId);
+
+              // Delete associated registrations, speakers, and updates
+              await this.crud.deleteDocumentByQuery('registrations', 'event_id', eventDocId);
+              await this.crud.deleteDocumentByQuery('speakers', 'event_id', eventDocId);
+              await this.crud.deleteDocumentByQuery('updates', 'event_id', eventDocId);
+
+              console.log('Event and associated documents deleted successfully');
+              loading.dismiss();
+              await this.ngOnInit();
+            }
+          }
+        ]
+      });
+
+      // Present the alert
+      await alert.present();
+    } else {
+      console.log('No event found with the specified name');
+    }
+  } catch (error) {
+    console.error("Error deleting event: ", error);
+  }
+}
+
+
+
 
 
 }
