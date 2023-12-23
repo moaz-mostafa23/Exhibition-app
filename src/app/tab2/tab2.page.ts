@@ -3,6 +3,7 @@ import { AuthService } from '../auth.service';
 import { AlertController, LoadingController, NavController, ModalController } from '@ionic/angular';
 import { CrudService } from '../crud.service';
 import { CreateEventPage } from '../create-event/create-event.page';
+import { UpdateEventPage } from '../update-event/update-event.page';
 
 
 @Component({
@@ -167,6 +168,19 @@ doReorderAttendee(ev:any){
 
   // After you've done the reordering, you must call `ev.detail.complete()`.
   ev.detail.complete();
+}
+
+
+async updateEvent(eventName:any){
+  const eventID = await this.crud.getDocumentIdByUniqueKey('events', 'name',eventName);
+  const modal = await this.modal.create({
+    component: UpdateEventPage,
+    componentProps: {
+      'eventID' : eventID
+    }
+  });
+  modal.onDidDismiss().then(async()=>{await this.ngOnInit()})
+  return await modal.present();
 }
 
 

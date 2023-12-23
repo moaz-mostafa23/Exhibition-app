@@ -51,7 +51,6 @@ export class CreateEventPage implements OnInit {
   
     const clientId = await this.crud.getDocumentIdByUniqueKey('users','uid',this.user.uid);
     const selectedHalldocID:any = await this.crud.getDocumentIdByUniqueKey('halls','name', this.eventForm.controls['hallName'].value);
-    const selectedHallOBJ  = await this.crud.getDocumentById('halls',selectedHalldocID);
     const isReserved:any = await this.crud.isEventReserved(this.eventForm.controls['startDate'].value, this.eventForm.controls['endDate'].value, selectedHalldocID);
     if (isReserved === 'Reserved'){
       const alert = await this.alrtCtrl.create({
