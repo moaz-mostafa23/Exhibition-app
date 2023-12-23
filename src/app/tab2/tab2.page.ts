@@ -145,6 +145,31 @@ async deleteEvent(eventName: string): Promise<void> {
   }
 }
 
+doReorderClient(ev: any) {
+  // The `ev` event contains the new order of the accordions.
+  // You can use this to update your `createdEvents` array.
+  console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
+
+  // Perform the array manipulation
+  const itemMove = this.createdEvents.splice(ev.detail.from, 1)[0];
+  this.createdEvents.splice(ev.detail.to, 0, itemMove)
+
+  // After you've done the reordering, you must call `ev.detail.complete()`.
+  ev.detail.complete();
+}
+
+doReorderAttendee(ev:any){
+  console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
+
+  // Perform the array manipulation
+  const itemMove = this.registeredEventsObj.splice(ev.detail.from, 1)[0];
+  this.registeredEventsObj.splice(ev.detail.to, 0, itemMove)
+
+  // After you've done the reordering, you must call `ev.detail.complete()`.
+  ev.detail.complete();
+}
+
+
 
 
 

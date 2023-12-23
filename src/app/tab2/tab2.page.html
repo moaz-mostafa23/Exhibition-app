@@ -23,25 +23,29 @@
 
 
   <ion-accordion-group *ngIf="registeredEventsObj && user.userType === 'attendee'">
-    <ion-accordion *ngFor="let event of registeredEventsObj; let i=index">
-      <ion-item slot="header" color="light">
-        <ion-label>{{event.name}}</ion-label>
-      </ion-item>
-      <ion-card slot="content">
-        <ion-card-header>
-          <ion-card-title>{{event.name}}</ion-card-title>
-          <ion-card-subtitle>Status: <ion-button  size="small" [color]="event.status === 'pending' ? 'warning' : (event.status === 'approved' ? 'success' : (event.status === 'not approved' ? 'danger' : 'danger'))">{{event.status}}</ion-button></ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-img [src]="event.picture[0]"></ion-img>
-          <ion-button size="small" (click)="deleteRegisteredEvent(event.name)" color="danger">Cancel</ion-button>
-        </ion-card-content>
-      </ion-card>
-    </ion-accordion>
+    <ion-reorder-group (ionItemReorder)="doReorderAttendee($event)" disabled="false">
+      <ion-accordion *ngFor="let event of registeredEventsObj; let i=index">
+        <ion-item slot="header" color="light">
+          <ion-label>{{event.name}}</ion-label>
+          <ion-reorder slot="end"></ion-reorder>
+        </ion-item>
+        <ion-card slot="content">
+          <ion-card-header>
+            <ion-card-title>{{event.name}}</ion-card-title>
+            <ion-card-subtitle>Status: <ion-button  size="small" [color]="event.status === 'pending' ? 'warning' : (event.status === 'approved' ? 'success' : (event.status === 'not approved' ? 'danger' : 'danger'))">{{event.status}}</ion-button></ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-img [src]="event.picture[0]"></ion-img>
+            <ion-button size="small" (click)="deleteRegisteredEvent(event.name)" color="danger">Cancel</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-accordion>
+    </ion-reorder-group>
   </ion-accordion-group>
+  
 
 
-  <ion-accordion-group *ngIf="createdEvents && user.userType === 'client'">
+  <!-- <ion-accordion-group *ngIf="createdEvents && user.userType === 'client'">
     <ion-accordion *ngFor="let event of createdEvents; let i=index">
       <ion-item slot="header" color="light">
         <ion-label>{{event.name}}</ion-label>
@@ -57,7 +61,30 @@
         </ion-card-content>
       </ion-card>
     </ion-accordion>
-  </ion-accordion-group>
+  </ion-accordion-group> -->
+  
+    <ion-accordion-group *ngIf="createdEvents && user.userType === 'client'">
+      <ion-reorder-group (ionItemReorder)="doReorderClient($event)" disabled="false">
+      <ion-accordion *ngFor="let event of createdEvents; let i=index">
+        <ion-item slot="header" color="light">
+          <ion-label>{{event.name}}</ion-label>
+          <ion-reorder></ion-reorder>
+        </ion-item>
+        <ion-card slot="content">
+          <ion-card-header>
+            <ion-card-title>{{event.name}}</ion-card-title>
+            <ion-card-subtitle>Status: <ion-button  size="small" [color]="event.status === 'pending' ? 'warning' : (event.status === 'approved' ? 'success' : (event.status === 'not approved' ? 'danger' : 'danger'))">{{event.status}}</ion-button></ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-img [src]="event.picture[0]"></ion-img>
+            <ion-button size="small" (click)="deleteEvent(event.name)" color="danger">Delete</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-accordion>
+    </ion-reorder-group>
+    </ion-accordion-group>
+  
+  
 
 
 </ion-content>
