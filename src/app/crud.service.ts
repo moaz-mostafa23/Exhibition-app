@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Firestore, where } from '@angular/fire/firestore';
 import { collection, collectionData, doc, addDoc, getDoc, updateDoc, deleteDoc, getDocs, DocumentReference, QuerySnapshot } from '@angular/fire/firestore';
 import { DocumentData, Query, query } from 'firebase/firestore';
-import { Observable, of, combineLatest, pipe, from  } from 'rxjs';
+import { Observable, of, combineLatest, pipe, from } from 'rxjs';
 
 import { map } from 'rxjs/operators';
 
@@ -64,6 +64,7 @@ export class CrudService {
     }
   }
 
+  // get a single document by query
   async getDocumentByQuery(collectionName: string, field: string, value: any): Promise<DocumentData | null> {
     try {
       // Create a query to find the document based on the specified field and value
@@ -84,6 +85,31 @@ export class CrudService {
       throw error;
     }
   }
+
+  // get all documents matching query
+  async getDocumentsByQuery(collectionName: string, field: string, value: any): Promise<DocumentData[]> {
+    try {
+      // Create a query to find the documents based on the specified field and value
+      const q = query(collection(this.firestore, collectionName), where(field, '==', value));
+
+      // Execute the query
+      const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
+
+      // Create an array to store the documents data
+      let documentsData: DocumentData[] = [];
+
+      // If there are documents matching the query, add their data to the array
+      querySnapshot.forEach((doc) => {
+        documentsData.push(doc.data() as DocumentData);
+      });
+
+      return documentsData;
+    } catch (error) {
+      console.error("Error getting documents by query: ", error);
+      throw error;
+    }
+  }
+
 
   // Get a specific document by its ID
   async getDocumentById(collectionName: string, documentId: string): Promise<DocumentData | any> {
@@ -293,17 +319,17 @@ export class CrudService {
     // Convert the start and end dates to JavaScript Date objects
     const eventStartDate = new Date(start_date);
     const eventEndDate = new Date(end_date);
-  
+
     // Get the hall document from Firestore
     const hallDoc = this.getDocumentById('halls', hallId);
-  
+
     // Combine the event and hall observables
     return from(hallDoc).pipe(
-      map((hall:any) => {
+      map((hall: any) => {
         // Convert the hall's start and end dates to JavaScript Date objects
         const hallStartDate = new Date(hall.start_date);
         const hallEndDate = new Date(hall.end_date);
-  
+
         // Check if the event start and end dates are within the hall's available dates
         if (eventStartDate >= hallStartDate && eventEndDate <= hallEndDate) {
           // If there is a conflict, return a message to the user
@@ -315,7 +341,7 @@ export class CrudService {
       })
     );
   }
-  
+
 
 
 
