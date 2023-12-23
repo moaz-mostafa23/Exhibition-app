@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title  *ngIf="user">
-      {{ user.userType === 'attendee' ? 'Registered Events' : (user.userType === 'admin' ? 'Admin' : (user.userType === 'client' ? 'Created Events' : '')) }}
+      {{ user.userType === 'attendee' ? 'Registered Events' : (user.userType === 'admin' ? 'Events' : (user.userType === 'client' ? 'Created Events' : '')) }}
     </ion-title>
     <ion-buttons *ngIf="user && user.userType === 'client'" slot="end">
       <ion-button (click)="customEvent()">
@@ -16,7 +16,7 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large" *ngIf="user">{{ user.userType === 'attendee' ? 'Registered Events' : (user.userType === 'admin' ? 'Admin' : (user.userType === 'client' ? 'Created Events' : '')) }}</ion-title>
+      <ion-title size="large" *ngIf="user">{{ user.userType === 'attendee' ? 'Registered Events' : (user.userType === 'admin' ? 'Events' : (user.userType === 'client' ? 'Created Events' : '')) }}</ion-title>
     </ion-toolbar>
   </ion-header>
 
@@ -84,6 +84,62 @@
       </ion-accordion>
     </ion-reorder-group>
     </ion-accordion-group>
+
+    <ion-accordion-group *ngIf="AllEvents && user.userType === 'admin'">
+      <ion-reorder-group (ionItemReorder)="doReorderAdmin($event)" disabled="false">
+        <ion-accordion>
+          <ion-item slot="header" color="light">
+            <ion-label>Pending Events</ion-label>
+            <ion-reorder></ion-reorder>
+          </ion-item>
+          <ion-card slot="content" *ngFor="let penEvent of pendingEvents">
+            <ion-card-header>
+              <ion-card-title>{{penEvent.name}}</ion-card-title>
+              <ion-card-subtitle>Status: <ion-button size="small" color="warning">Pending</ion-button></ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-img [src]="penEvent.picture[0]"></ion-img>
+              <!-- Add your buttons here -->
+            </ion-card-content>
+          </ion-card>
+        </ion-accordion>
+    
+        <ion-accordion>
+          <ion-item slot="header" color="light">
+            <ion-label>Approved Events</ion-label>
+            <ion-reorder></ion-reorder>
+          </ion-item>
+          <ion-card slot="content" *ngFor="let approEvent of approvedEvents">
+            <ion-card-header>
+              <ion-card-title>{{approEvent.name}}</ion-card-title>
+              <ion-card-subtitle>Status: <ion-button size="small" color="success">Approved</ion-button></ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-img [src]="approEvent.picture[0]"></ion-img>
+              <!-- Add your buttons here -->
+            </ion-card-content>
+          </ion-card>
+        </ion-accordion>
+    
+        <ion-accordion>
+          <ion-item slot="header" color="light">
+            <ion-label>Not Approved Events</ion-label>
+            <ion-reorder></ion-reorder>
+          </ion-item>
+          <ion-card slot="content" *ngFor="let notEvent of notApprovedEvents">
+            <ion-card-header>
+              <ion-card-title>{{notEvent.name}}</ion-card-title>
+              <ion-card-subtitle>Status: <ion-button size="small" color="danger">Not Approved</ion-button></ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-img [src]="notEvent.picture[0]"></ion-img>
+              <!-- Add your buttons here -->
+            </ion-card-content>
+          </ion-card>
+        </ion-accordion>
+      </ion-reorder-group>
+    </ion-accordion-group>
+    
   
   
 

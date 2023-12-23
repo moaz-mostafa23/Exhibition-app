@@ -17,6 +17,10 @@ export class Tab2Page implements OnInit, OnDestroy {
   registeredEventsObj:any;
   createdEvents:any = [];
   userID:any;
+  AllEvents:any = [];
+  pendingEvents:any = [];
+  approvedEvents:any = [];
+  notApprovedEvents:any = [];
   
 
   constructor(private modal:ModalController,private crud:CrudService,private authService:AuthService, private loading:LoadingController, private navCtrl: NavController, private alertController:AlertController) {
@@ -30,6 +34,10 @@ export class Tab2Page implements OnInit, OnDestroy {
     try{
     const isLoggedIn =await this.authService.isLoggedIn();
     if(!isLoggedIn) this.navCtrl.navigateForward('/login');
+    this.AllEvents = await this.crud.getAllDocumentsByCollectionUsingPromise('events');
+    this.pendingEvents = this.AllEvents.filter((ev:any)=>{return ev.status === 'pending'});
+    this.approvedEvents = this.AllEvents.filter((ev:any)=> {return ev.status === 'approved'});
+    this.notApprovedEvents = this.AllEvents.filter((ev:any)=> {return ev.status === 'not approved'});
     this.user = await this.authService.getUserData();
     this.userID= await this.crud.getDocumentIdByUniqueKey('users','email',this.user.email);
     this.registeredEventsID = (await this.crud.getRegisterationByAttendeeId(this.userID)).map((res:any)=> res.event_id);
@@ -37,7 +45,10 @@ export class Tab2Page implements OnInit, OnDestroy {
     if(this.user.userType === 'client'){
     this.createdEvents = await this.crud.getEventsByClientId(this.userID);
     }
-    console.log(this.createdEvents);
+    console.log('All Events', this.AllEvents);
+    console.log('Pending Events', this.pendingEvents);
+    console.log('Approved Events',this.approvedEvents);
+    console.log('Not Approved Events',this.notApprovedEvents);
     await loader.dismiss();
     }catch(err){
       loader.dismiss();
@@ -167,6 +178,15 @@ doReorderAttendee(ev:any){
   this.registeredEventsObj.splice(ev.detail.to, 0, itemMove)
 
   // After you've done the reordering, you must call `ev.detail.complete()`.
+  ev.detail.complete();
+}
+
+doReorderAdmin(ev: any) {
+  console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
+
+  const itemMove = this.AllEvents.splice(ev.detail.from, 1)[0];
+  this.AllEvents.splice(ev.detail.to, 0, itemMove)
+
   ev.detail.complete();
 }
 

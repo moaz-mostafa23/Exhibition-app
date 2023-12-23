@@ -342,6 +342,20 @@ export class CrudService {
     );
   }
 
+  getAllDocumentsByCollectionUsingPromise(collectionName: string): Promise<DocumentData[]> {
+    return new Promise<DocumentData[]>((resolve, reject) => {
+      getDocs(collection(this.firestore, collectionName))
+        .then((querySnapshot: QuerySnapshot<DocumentData>) => {
+          const documents = querySnapshot.docs.map(doc => doc.data());
+          resolve(documents);
+        })
+        .catch((error: any) => {
+          console.error("Error getting documents: ", error);
+          reject(error);
+        });
+    });
+  }
+
 
 
 
