@@ -21,6 +21,8 @@ export class UpdateEventPage implements OnInit {
   update_text:string = ''
   update_header:string = ""
   speaker_name:string = ""
+  pic1:string = ""
+  pic2:string = ""
 
   constructor(private modal:ModalController,private formBuilder: FormBuilder, private crud: CrudService, navParams: NavParams, private alertController: AlertController, private loadingController: LoadingController) { 
     this.eventID = navParams.get('eventID');
@@ -45,9 +47,17 @@ export class UpdateEventPage implements OnInit {
     //   update_header: [updatesDoc ? updatesDoc['update_header'] : ''],
     //   speaker_name: [speakersDoc ? speakersDoc['speaker_name'] : '']
     // });
+    try{
     this.update_text = updatesDoc['update_text'];
     this.update_header = updatesDoc['update_header'];
-    this.speaker_name = speakersDoc['speaker_name']
+    this.speaker_name = speakersDoc['speaker_name'];
+    this.pic1 = this.eventObj.picture[0];
+    this.pic2 = this.eventObj.picture[1];
+    this.name = this.eventObj.name;
+    this.agenda  = this.eventObj.agenda;
+    }catch(err){
+      console.log(err);
+    }
 
 
   
@@ -56,7 +66,7 @@ export class UpdateEventPage implements OnInit {
 
 
   isValid(){
-    if(this.name && this.agenda && this.update_header && this.update_text && this.speaker_name){
+    if(this.name && this.agenda && this.update_header && this.update_text && this.speaker_name && this.pic1 && this.pic2){
       return true
     }else{
       return false;
@@ -70,7 +80,8 @@ export class UpdateEventPage implements OnInit {
         name: this.name,
         start_date: firebase.firestore.Timestamp.fromDate(new Date(this.start_date)),
         end_date: firebase.firestore.Timestamp.fromDate(new Date(this.end_date)),
-        agenda: this.agenda
+        agenda: this.agenda,
+        picture: [this.pic1, this.pic2]
       };
   
       console.log('Form data:', formData);
