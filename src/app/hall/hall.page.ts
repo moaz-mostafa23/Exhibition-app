@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CrudService, Hall } from '../crud.service';
 import { NavController } from '@ionic/angular';
 import { UtilityService } from '../utility.service';
-import { Chart } from 'chart.js';
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -49,6 +49,8 @@ export class HallPage implements OnInit {
     private navCtrl: NavController,
     public crudService: CrudService,
     public utilityService: UtilityService,
+    private router: Router,
+    private location: Location,
   ) { }
 
   async ngOnInit() {
@@ -76,7 +78,11 @@ export class HallPage implements OnInit {
   async deleteHall(hallName: string) {
     try {
       await this.crudService.deleteDocumentByQuery('halls', 'name', hallName);
-      this.navCtrl.navigateRoot('/home');
+
+      // Reload the current route to reflect changes
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate(['/']);
+      });
     } catch (error) {
       console.error('Error deleting hall:', error);
     }
