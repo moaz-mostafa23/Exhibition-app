@@ -97,24 +97,10 @@ export class Tab1Page implements OnInit, OnDestroy {
     await loading.present();
 
     try {
-      this.crudService.getDocuments('events').subscribe((events) => {
-        this.events = events as Event[];
-        this.eventsCopy = events as Event[];
-
-        this.events.forEach(element => {
-          element.start_date = this.utilityService.convertFirebaseTimestamp(element.start_date);
-          element.end_date = this.utilityService.convertFirebaseTimestamp(element.end_date);
-        })
-        // same for the eventsCopy
-        this.eventsCopy.forEach(element => {
-          element.start_date = this.utilityService.convertFirebaseTimestamp(element.start_date);
-          element.end_date = this.utilityService.convertFirebaseTimestamp(element.end_date);
-        });
-
-        console.log(this.events);
-        console.log(this.eventsCopy);
-        loading.dismiss();
-      });
+      this.events = await this.crudService.getAttendeeHomeEvents();
+      this.eventsCopy = this.events;
+      console.log(this.events);
+      loading.dismiss();
     } catch (err) {
       let alert = await this.alertController.create({
         header: 'Error',
@@ -126,6 +112,25 @@ export class Tab1Page implements OnInit, OnDestroy {
       console.log(err);
     }
   }
+
+  async handleAttendeeHomeRefresh(event : any){
+    await this.getEvents();
+
+    setTimeout(() => {
+      // Any calls to load data go here
+      event.target.complete();
+    }, 1000);
+  }
+
+  async handleClientHomeRefresh(event : any){
+    await this.getHalls();
+
+    setTimeout(() => {
+      // Any calls to load data go here
+      event.target.complete();
+    }, 1000);
+  }
+
   async openHallModal() {
     try {
       console.log('Opening Hall Modal');

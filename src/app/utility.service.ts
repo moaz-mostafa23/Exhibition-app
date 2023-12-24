@@ -17,7 +17,10 @@ export class UtilityService {
 
   convertFirebaseTimestamp(timestamp: any): string {
     let date = new Date(timestamp.seconds * 1000 + (timestamp.nanoseconds / 1000000));
-    return date.toDateString() + "\t-\t" + date.toLocaleTimeString();
+    // console.log(date);
+    let result = date.toDateString() + " - " + date.toLocaleTimeString();
+    // console.log(result);
+    return result;
   }
 
 }

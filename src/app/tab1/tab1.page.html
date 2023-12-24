@@ -27,6 +27,11 @@
   <!-- ignore the error here, it works -->
   <!-- Start of attendee screen -->
   <div *ngIf="userType ==='attendee'">
+    
+    <ion-refresher slot="fixed" (ionRefresh)="handleAttendeeHomeRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
     <ion-searchbar (ionInput)="searchEvents($event)"></ion-searchbar>
     <!-- attendee.user@email.com, pass: admin123 -->
     <ion-list>
@@ -44,7 +49,7 @@
             <p><b>Ends:</b> {{event.end_date}}</p>
             <!--  should be hall name -->
             <p><b>Hall:</b> {{event.hall_name}}</p> 
-            <p><b>Status:</b> {{event.status}}</p>
+
 
               <ion-button 
               color="primary" 
@@ -62,6 +67,11 @@
 
   <!-- Start of client screen -->
   <div *ngIf="userType ==='client'">
+
+    <ion-refresher slot="fixed" (ionRefresh)="handleClientHomeRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
     <ion-searchbar (ionInput)="searchHalls($event)"></ion-searchbar>
     <!-- attendee.user@email.com, pass: admin123 -->
     <ion-list>

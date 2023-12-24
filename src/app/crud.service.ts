@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Firestore, where } from '@angular/fire/firestore';
+import { Firestore } from '@angular/fire/firestore';
 import { collection, collectionData, doc, addDoc, getDoc, updateDoc, deleteDoc, getDocs, DocumentReference, QuerySnapshot } from '@angular/fire/firestore';
-import { DocumentData, Query, query } from 'firebase/firestore';
-import { Observable, of, combineLatest, pipe, from } from 'rxjs';
-
+import { DocumentData, query, where } from 'firebase/firestore';
+import { Observable, of, combineLatest, pipe, from, } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { UtilityService } from './utility.service';
 
 
 export interface Event {
-  agendas: string;
+  agenda: string;
   client_id: string;
   end_date: string;
   hall_id: string;
@@ -36,7 +36,7 @@ export class CrudService {
   public events$: Observable<DocumentData[]> = this.getDocuments('events');
 
 
-  constructor(private firestore: Firestore) { }
+  constructor(private firestore: Firestore, private utilityService : UtilityService) { }
 
   async createDocument(collectionName: string, data: any): Promise<DocumentReference<DocumentData> | any> {
     try {
@@ -207,6 +207,22 @@ export class CrudService {
     }
   }
 
+  async getEventDetails(eventName : string) : Promise<DocumentData>{
+    let myDoc : DocumentData = {} as Event;
+    try{
+      const collectionRef = collection(this.firestore, 'events');
+      const q = query(collectionRef, where("name", "==", eventName));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // console.log(doc.id, " => ", doc.data());
+        myDoc = doc.data();
+      });
+    }catch(err){
+      console.log(err);
+    }
+    return myDoc;
+  }
+
   async getDocumentIdByUniqueKey(collectionName: string, uniqueKey: string, value: string): Promise<string | null> {
     try {
       const collectionRef = collection(this.firestore, collectionName);
@@ -364,6 +380,28 @@ export class CrudService {
     });
   }
 
+  async getAttendeeHomeEvents() : Promise<Event[]>{
+    let events : Event[] = [];
+    try {
+      const collectionRef = collection(this.firestore, 'events');
+      const q = query(collectionRef, where("status", "==", "approved"));
+      const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach(
+        (doc) => {
+          let event = doc.data() as Event;
+          event.start_date = this.utilityService.convertFirebaseTimestamp(event.start_date);
+          event.end_date =  this.utilityService.convertFirebaseTimestamp(event.end_date);
+          events.push(event);
+          // console.log("date after editing: " + event.start_date);
+        }
+      );
+      return events;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return [];
+    }
+  }
 
 async getEventsByHallID(hallId: string): Promise<any[]> {
   // Get the document ID of the hall using its name
@@ -385,13 +423,8 @@ async getEventsByHallID(hallId: string): Promise<any[]> {
   return events;
 }
 
+  async getEventSpeakers(){
 
-
-
-
-
-
-
-
+  }
 
 }
