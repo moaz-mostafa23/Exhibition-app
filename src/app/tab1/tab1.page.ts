@@ -121,6 +121,15 @@ export class Tab1Page implements OnInit, OnDestroy {
     }, 1000);
   }
 
+  async handleClientHomeRefresh(event : any){
+    await this.getHalls();
+
+    setTimeout(() => {
+      // Any calls to load data go here
+      event.target.complete();
+    }, 1000);
+  }
+
   async openHallModal() {
     try {
       console.log('Opening Hall Modal');
