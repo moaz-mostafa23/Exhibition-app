@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancel()">Cancel</ion-button>
+    </ion-buttons>
+    <ion-title>{{ viewTitle }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <calendar [eventSource]="eventSource"
+            (onTitleChanged)="onViewTitleChanged($event)"
+            (onEventSelected)="onEventSelected($event)"
+            (onTimeSelected)="onTimeSelected($event)"
+            (onCurrentDateChanged)="onCurrentDateChanged($event)">
+  </calendar>
+</ion-content>
+

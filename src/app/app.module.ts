@@ -13,6 +13,8 @@ import { ReactiveFormsModule } from '@angular/forms'
 
 import { IonicStorageModule } from '@ionic/storage-angular';
 
+import {NgCalendarModule} from 'ionic2-calendar'
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyCpXrqctZrI4oee53qBKtZyWJBmIA7JDn4",
@@ -25,7 +27,7 @@ const firebaseConfig = {
 };
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicStorageModule.forRoot(), IonicModule.forRoot({ mode: 'ios' }), AppRoutingModule, HttpClientModule, provideFirebaseApp(() => initializeApp(firebaseConfig)), provideFirestore(() => getFirestore()), provideAnalytics(() => getAnalytics()), provideAuth(() => getAuth()), ReactiveFormsModule],
+  imports: [BrowserModule, IonicStorageModule.forRoot(), IonicModule.forRoot({ mode: 'ios' }), AppRoutingModule, HttpClientModule, provideFirebaseApp(() => initializeApp(firebaseConfig)), provideFirestore(() => getFirestore()), provideAnalytics(() => getAnalytics()), provideAuth(() => getAuth()), ReactiveFormsModule, NgCalendarModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })

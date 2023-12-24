@@ -9,6 +9,7 @@ import { UtilityService } from '../utility.service';
 import { HallModalPage } from '../hall-modal/hall-modal.page';
 import { firstValueFrom } from 'rxjs';
 import { HallEditModalPage } from '../hall-edit-modal/hall-edit-modal.page';
+import { ForeseePage } from '../foresee/foresee.page';
 
 @Component({
   selector: 'app-tab1',
@@ -244,5 +245,19 @@ export class Tab1Page implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Error opening Hall Edit Modal', error);
     }
+  }
+
+  async openForesee(hallName:any){
+    const hallDocID = await this.crudService.getDocumentIdByUniqueKey('halls','name',hallName);
+    const modal = await this.modalController.create({
+      component: ForeseePage,
+      componentProps:{
+        'hallID': hallDocID
+      }
+    });
+    return await modal.present();
+
+
+
   }
 }
