@@ -23,10 +23,10 @@ export class ChatPage implements OnInit {
     this.receiverId = this.activatedRoute.snapshot.paramMap.get('receiverId');
   }
 
-  sendMessage(){
+  async sendMessage(){
     let currentUserId = this.authService.getCurrentUser()?.uid;
     if(
-      !this.crudService.sendMessage(currentUserId, this.receiverId, this.msg);
+      !this.crudService.sendMessage(currentUserId, this.receiverId, this.msg)
       ){
         console.log("Error sending message");
         let alert = await this.alertController.create({
