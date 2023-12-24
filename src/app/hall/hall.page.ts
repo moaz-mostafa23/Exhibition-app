@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CrudService, Hall } from '../crud.service';
 import { NavController } from '@ionic/angular';
 import { UtilityService } from '../utility.service';
-import { Chart } from 'chart.js';
+// import { Chart } from 'chart.js';
 
 
 @Component({
