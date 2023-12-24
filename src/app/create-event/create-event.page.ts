@@ -71,14 +71,14 @@ export class CreateEventPage implements OnInit {
       picture: [this.eventForm.controls['pic1'].value, this.eventForm.controls['pic2'].value],
       status: this.eventForm.controls['status'].value
     };
-    const eventDocRef = await this.crud.createDocument('events', newEvent);
+    const eventDocRef = await this.crud.createDocument('events', {...newEvent, hall_name: this.eventForm.controls['hallName'].value});
   
     // Create a new speaker
     const newSpeaker = {
       event_id: eventDocRef.id,
       speaker_name: this.eventForm.controls['speakerName'].value
     };
-    await this.crud.createDocument('speakers', {...newSpeaker, hall_name: this.eventForm.controls['hallName'].value});
+    await this.crud.createDocument('speakers', newSpeaker);
   
     // Create a new update
     const newUpdate = {
