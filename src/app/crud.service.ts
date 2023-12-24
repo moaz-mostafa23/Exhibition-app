@@ -453,7 +453,7 @@ async getEventsByHallID(hallId: string): Promise<any[]> {
       const querySnapshot = await getDoc(doc(this.firestore, 'halls/' + hallId));
 
       if(querySnapshot.exists()){
-        floorPlan = querySnapshot.data()['floor_plan'];
+        floorPlan = querySnapshot.data()['floor_plan'].substring(0,250);
       }
       return floorPlan;
     } catch (error) {
