@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Firestore } from '@angular/fire/firestore';
 import { collection, collectionData, doc, addDoc, getDoc, updateDoc, deleteDoc, getDocs, DocumentReference, QuerySnapshot } from '@angular/fire/firestore';
-import { DocumentData, Query, query, where } from 'firebase/firestore';
-import { Observable, of, combineLatest, pipe, from } from 'rxjs';
-
+import { DocumentData, query, where } from 'firebase/firestore';
+import { Observable, of, combineLatest, pipe, from, } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 
@@ -208,6 +207,22 @@ export class CrudService {
     }
   }
 
+  async getEventDetails(eventName : string) : Promise<DocumentData>{
+    let myDoc : DocumentData = {} as Event;
+    try{
+      const collectionRef = collection(this.firestore, 'events');
+      const q = query(collectionRef, where("name", "==", eventName));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // console.log(doc.id, " => ", doc.data());
+        myDoc = doc.data();
+      });
+    }catch(err){
+      console.log(err);
+    }
+    return myDoc;
+  }
+
   async getDocumentIdByUniqueKey(collectionName: string, uniqueKey: string, value: string): Promise<string | null> {
     try {
       const collectionRef = collection(this.firestore, collectionName);
@@ -357,26 +372,22 @@ export class CrudService {
     });
   }
 
-
-
-
-
-
-
-
-  async getEventDetails(eventName : string) : Promise<DocumentData>{
-    let myDoc : DocumentData = {} as Event;
+  async getAttendeeHomeEvents() : Promise<Event[]>{
+    let events : DocumentData[];
+    let finalEvents : Event[] = [] as Event[];
     try{
       const collectionRef = collection(this.firestore, 'events');
-      const q = query(collectionRef, where("name", "==", eventName));
+      const q = query(collectionRef, where("status", "==", "approved"));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         // console.log(doc.id, " => ", doc.data());
-        myDoc = doc.data();
+        finalEvents.push(doc.data() as Event);
       });
-    }catch(err){
-      console.log(err);
+    }catch(err: any){
+      console.log(err.message);
+
     }
-    return myDoc;
+    return finalEvents;
   }
+
 }
