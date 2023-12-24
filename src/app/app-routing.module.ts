@@ -40,7 +40,21 @@ const routes: Routes = [
   {
     path: 'hall-edit-modal',
     loadChildren: () => import('./hall-edit-modal/hall-edit-modal.module').then(m => m.HallEditModalPageModule)
+  },
+  {
+    path: 'edit-admin',
+    loadChildren: () => import('./edit-admin/edit-admin.module').then( m => m.EditAdminPageModule)
+  },
+  {
+    path: 'create-event',
+    loadChildren: () => import('./create-event/create-event.module').then( m => m.CreateEventPageModule)
+  },  {
+    path: 'update-event',
+    loadChildren: () => import('./update-event/update-event.module').then( m => m.UpdateEventPageModule)
   }
+
+
+
 
 
 

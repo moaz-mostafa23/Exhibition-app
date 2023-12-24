@@ -13,34 +13,26 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-list>
-    <ion-item>
-      <ion-buttons (click)="viewEdit()">Edit Profile</ion-buttons>
-      <!-- <ion-toggle [(ngModel)]="" (ionChange)=""></ion-toggle> -->
-    </ion-item>
-    <ion-item>
-      
-      <ion-buttons (click)="viewAddAdmin()">Add Admin</ion-buttons>
+  <ion-list class="settings-list">
+    <ion-item lines="none">
+      <ion-button expand="full" (click)="viewEdit()">Edit Profile</ion-button>
     </ion-item>
 
-    <ion-item>
-      <ion-label>Edit Admins</ion-label>
+    <ion-item *ngIf="user.userType === 'admin'" lines="none">
+      <ion-button expand="full" (click)="viewAddAdmin()">Add Admin</ion-button>
     </ion-item>
 
-    <ion-item>
-      <ion-button (click)="signOut()">Sign Out</ion-button>
+    <ion-item *ngIf="user.userType === 'admin'" lines="none">
+      <ion-button expand="full" (click)="viewEditAdmin()">Edit Admin</ion-button>
     </ion-item>
 
-    <ion-item>
-      <ion-button (click)="deleteAccount()" >Delete Account</ion-button>
+    <ion-item lines="none">
+      <ion-button expand="full" (click)="signOut()">Sign Out</ion-button>
     </ion-item>
 
-  
-   
+    <ion-item lines="none">
+      <ion-button expand="full" (click)="deleteAccount()">Delete Account</ion-button>
+    </ion-item>
   </ion-list>
 
-
-
-
-  
 </ion-content>

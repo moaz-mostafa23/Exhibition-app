@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="primary" (click)="cancel()">Cancel</ion-button>
+    </ion-buttons>
+    <ion-title>Update Custom Event</ion-title>
+    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-item>
+      
+    <ion-datetime displayFormat="MMMM D, YYYY h:mm A" pickerFormat="MMMM D, YYYY h:mm A" [(ngModel)]="start_date" ></ion-datetime>
+  </ion-item>
+  <br>
+  <ion-item>
+   
+    <ion-datetime displayFormat="MMMM D, YYYY h:mm A" pickerFormat="MMMM D, YYYY h:mm A" [(ngModel)]="end_date"></ion-datetime>
+  </ion-item>
+  <ion-item>
+    <ion-input label="Event Name"  [(ngModel)]="name" placeholder="Enter event name"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-input label="Agenda" [(ngModel)]="agenda" placeholder="Enter agenda"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-input label="Update Text" [(ngModel)]="update_text" placeholder="Enter update text"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-input label="Update Header" [(ngModel)]="update_header" placeholder="Enter update header"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-input label="Speaker Name" [(ngModel)]="speaker_name" placeholder="Enter speaker name"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-input label="Picture 1" [(ngModel)]="pic1" placeholder="Enter image link 1"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-input label="Picture 2" [(ngModel)]="pic2" placeholder="Enter image link 2"></ion-input>
+  </ion-item>
+  <ion-button  expand="block" type="submit" (click)="onSubmit()">Submit</ion-button>
+
+  
+  
+  
+ 
+  
+
+</ion-content>
+
