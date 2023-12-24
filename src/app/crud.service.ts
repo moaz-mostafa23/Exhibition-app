@@ -5,6 +5,7 @@ import { DocumentData, query, where } from 'firebase/firestore';
 import { Observable, of, combineLatest, pipe, from, } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UtilityService } from './utility.service';
+import { AuthService } from './auth.service';
 
 
 export interface Event {
@@ -18,6 +19,12 @@ export interface Event {
   status: string;
   hall_name: void;
 }
+
+export interface Update{
+  update_header: string;
+  update_text: string;
+}
+
 
 export interface Hall {
   booth_fiting: string;
@@ -36,7 +43,7 @@ export class CrudService {
   public events$: Observable<DocumentData[]> = this.getDocuments('events');
 
 
-  constructor(private firestore: Firestore, private utilityService : UtilityService) { }
+  constructor(private firestore: Firestore, private utilityService : UtilityService,) { }
 
   async createDocument(collectionName: string, data: any): Promise<DocumentReference<DocumentData> | any> {
     try {
@@ -423,8 +430,123 @@ async getEventsByHallID(hallId: string): Promise<any[]> {
   return events;
 }
 
-  async getEventSpeakers(){
+  async getEventSpeakers(eventName : any) : Promise<string[]>{
+    let eventId = await this.getDocumentIdByUniqueKey('events', 'name', eventName);
+    let speakers : any[] = [];
+    try {
+      const collectionRef = collection(this.firestore, 'speakers');
+      const q = query(collectionRef, where("event_id", "==", eventId));
+      const querySnapshot = await getDocs(q);
 
+    querySnapshot.forEach(
+        (doc) => {
+          let speaker = doc.data()['speaker_name'];
+          speakers.push(speaker);
+        }
+      );
+      return speakers;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return [];
+    }
   }
 
+  async getEventFloorPlan(hallId : any) : Promise<any>{
+    let floorPlan : any;
+    try {
+      const collectionRef = collection(this.firestore, 'halls');
+      const q = query(collectionRef, where("id", "==", hallId));
+      const querySnapshot = await getDoc(doc(this.firestore, 'halls/' + hallId));
+
+      if(querySnapshot.exists()){
+        floorPlan = querySnapshot.data()['floor_plan'].substring(0,250);
+      }
+      return floorPlan;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return null;
+    }
+  }
+
+  async getEventAttendees(eventName : any) : Promise<string[] | []>{
+    let eventId = await this.getDocumentIdByUniqueKey('events', 'name', eventName);
+    let attendees : any[] = [];
+    try {
+      const collectionRef = collection(this.firestore, 'registrations');
+      const q = query(collectionRef, where("event_id", "==", eventId));
+      const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach(
+        async (doc) => {
+          // get attendee name using the id
+          
+          let attendee = await this.getAttendeeNameById(doc.data()['attendee_id']);
+          attendees.push(attendee);
+          console.log("attendee: " + attendee);
+        }
+      );
+      return attendees;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return [];
+    }
+  }
+
+  async getAttendeeNameById(attendeeId : any) : Promise<string | null>{
+    let attendeeName : any;
+    try {
+      const collectionRef = collection(this.firestore, 'users');
+      const querySnapshot = await getDocs(query(collectionRef, where("uid", "==", attendeeId)));
+
+      querySnapshot.forEach(
+        (doc)=>{
+          attendeeName = doc.data()['firstName'] + " " + doc.data()['lastName'];
+          return attendeeName;
+        }
+      );
+      return attendeeName;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return null;
+    }
+  }
+
+  async registerAttendeeInEvent(eventName : any, attendeeId : any) : Promise<boolean>{
+    try{
+
+      let eventId = await this.getDocumentIdByUniqueKey('events', 'name', eventName);
+      const collectionRef = collection(this.firestore, 'registrations');
+      const docRef = await addDoc(collectionRef, {event_id: eventId, attendee_id: attendeeId});
+      return true;
+    }catch(error){
+      console.log("Error registering event");
+      return false;
+    }
+  }
+
+  async getEventUpdates(eventName : any) : Promise<any[]>{
+    let eventId = await this.getDocumentIdByUniqueKey('events', 'name', eventName);
+    let updates : Update[] = [];
+
+    try {
+      const collectionRef = collection(this.firestore, 'updates');
+      const q = query(collectionRef, where("event_id", "==", eventId));
+      const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach(
+        (doc) => {
+          updates.push({
+            update_header: doc.data()['update_header'],
+            update_text: doc.data()['update_text'],
+          });
+
+        }
+        );
+        console.log("update: " + updates.toString()); 
+      return updates;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return [];
+    }
+  }
 }
