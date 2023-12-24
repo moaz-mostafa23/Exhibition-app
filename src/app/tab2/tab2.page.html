@@ -98,7 +98,7 @@
               <ion-card-subtitle>Status: <ion-button size="small" color="warning">Pending</ion-button></ion-card-subtitle>
               <ion-fab style="position: absolute; right: 0;">
                 <ion-fab-button size="small" color="success">
-                  <ion-icon name="chatbubble"></ion-icon>
+                  <ion-icon name="chatbubble" routerLink="/chat/{{penEvent.client_id}}" routerDirection="forward"></ion-icon>
                 </ion-fab-button>
               </ion-fab>
             </ion-card-header>
@@ -128,7 +128,7 @@
               <ion-card-subtitle>Status: <ion-button size="small" color="success">Approved</ion-button></ion-card-subtitle>
               <ion-fab style="position: absolute; right: 0;">
                 <ion-fab-button size="small" color="success">
-                  <ion-icon name="chatbubble"></ion-icon>
+                  <ion-icon name="chatbubble" routerLink="/chat/{{approEvent.client_id}}" routerDirection="forward"></ion-icon>
                 </ion-fab-button>
               </ion-fab>
             </ion-card-header>
@@ -158,7 +158,7 @@
               <ion-card-subtitle>Status: <ion-button size="small" color="danger">Not Approved</ion-button></ion-card-subtitle>
               <ion-fab style="position: absolute; right: 0;">
                 <ion-fab-button size="small" color="success">
-                  <ion-icon name="chatbubble"></ion-icon>
+                  <ion-icon name="chatbubble" routerLink="/chat/{{notEvent.client_id}}" routerDirection="forward"></ion-icon>
                 </ion-fab-button>
               </ion-fab>
             </ion-card-header>
