@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CrudService } from '../crud.service';
+import { CrudService, Message } from '../crud.service';
 import { AuthService } from '../auth.service';
 import { AlertController } from '@ionic/angular';
+import { Observable } from 'rxjs';
+
+import { Firestore } from '@angular/fire/firestore';
+import { collection, collectionData, doc, addDoc, getDoc, updateDoc, deleteDoc, getDocs, DocumentReference, QuerySnapshot } from '@angular/fire/firestore';
+import { DocumentData, query, where } from 'firebase/firestore';
 
 @Component({
   selector: 'app-chat',
@@ -13,6 +18,11 @@ export class ChatPage implements OnInit {
 
   receiverId : any = '';
   msg = '';
+  currentUserId = this.authService.getCurrentUser()?.uid;
+
+
+  messages$ : Observable<Message[]> = undefined as any;
+
   constructor(private activatedRoute : ActivatedRoute, 
               private crudService : CrudService, 
               private authService : AuthService,
@@ -21,12 +31,13 @@ export class ChatPage implements OnInit {
 
   ngOnInit() {
     this.receiverId = this.activatedRoute.snapshot.paramMap.get('receiverId');
+    // subscribe to the messages observable
+    // this.messages$ = collectionData<Message>(query(collection(this.crudService.firestore, 'messages'), where('senderId', 'in', [this.currentUserId, this.receiverId]), where('receiverId', 'in', [this.currentUserId, this.receiverId]));
   }
 
   async sendMessage(){
-    let currentUserId = this.authService.getCurrentUser()?.uid;
     if(
-      !this.crudService.sendMessage(currentUserId, this.receiverId, this.msg)
+      !this.crudService.sendMessage(this.currentUserId, this.receiverId, this.msg)
       ){
         console.log("Error sending message");
         let alert = await this.alertController.create({

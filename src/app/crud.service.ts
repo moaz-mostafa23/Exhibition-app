@@ -25,6 +25,12 @@ export interface Update{
   update_text: string;
 }
 
+export interface Message{
+  sender_id: string;
+  receiver_id: string;
+  message: string;
+  timestamp: string;
+}
 
 export interface Hall {
   booth_fiting: string;
@@ -42,8 +48,9 @@ export class CrudService {
 
   public events$: Observable<DocumentData[]> = this.getDocuments('events');
 
+  public messages$: Observable<DocumentData[]> = undefined as any as Observable<DocumentData[]>;
 
-  constructor(private firestore: Firestore, private utilityService : UtilityService,) { }
+  constructor(public firestore: Firestore, private utilityService : UtilityService,) { }
 
   async createDocument(collectionName: string, data: any): Promise<DocumentReference<DocumentData> | any> {
     try {
@@ -553,11 +560,40 @@ async getEventsByHallID(hallId: string): Promise<any[]> {
   async sendMessage(senderId : any, receiverId : any, message : any){
     try{
       const collectionRef = collection(this.firestore, 'messages');
-      const docRef = await addDoc(collectionRef, {sender_id: senderId, receiver_id: receiverId, message: message});
+      const docRef = await addDoc(collectionRef, {sender_id: senderId, receiver_id: receiverId, message: message, timestamp: new Date().toISOString()});
       return true;
     }catch(error){
       console.log("Error sending message");
       return false;
     }
   }
+
+  // async getMessages(senderId : any, receiverId : any) : Promise<any[]>{ 
+    
+    
+    // let messages : any[] = [];
+    // try {
+    //   const collectionRef = collection(this.firestore, 'messages');
+    //   const q = query(collectionRef, where("sender_id", "==", senderId), where("receiver_id", "==", receiverId));
+    //   const querySnapshot = await getDocs(q);
+
+    // querySnapshot.forEach(
+    //     (doc) => {
+    //       messages.push({
+    //         sender_id: doc.data()['sender_id'],
+    //         receiver_id: doc.data()['receiver_id'],
+    //         message: doc.data()['message'],
+    //       });
+
+    //     }
+    //     );
+    //     console.log("messages: " + messages.toString()); 
+    //   return messages;
+    // } catch (error) {
+    //   console.error("Error getting documents: ", error);
+    //   return [];
+    // }
+  // }
+
+
 }
