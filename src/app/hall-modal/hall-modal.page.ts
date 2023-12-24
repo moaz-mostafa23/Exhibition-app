@@ -1,8 +1,8 @@
 // hall-modal.page.ts
-
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { CrudService } from '../crud.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-hall-modal',
@@ -10,6 +10,7 @@ import { CrudService } from '../crud.service';
   styleUrls: ['./hall-modal.page.scss'],
 })
 export class HallModalPage implements OnInit {
+  hallForm: FormGroup;
   hall = {
     booth_fitting: '',
     capacity: '',
@@ -18,20 +19,34 @@ export class HallModalPage implements OnInit {
     name: '',
   };
 
-  constructor(private modalController: ModalController, private crudService: CrudService) { }
-
+  constructor(
+    private modalController: ModalController,
+    private crudService: CrudService,
+    private formBuilder: FormBuilder
+  ) {
+    this.hallForm = this.formBuilder.group({
+      booth_fitting: ['', Validators.required],
+      capacity: ['', Validators.required],
+      contact_info: ['', Validators.required],
+      floor_plan: ['', Validators.required],
+      name: ['', Validators.required],
+    });
+  }
 
   submitForm() {
     try {
       console.log('Form submitted');
-      // TODO: Add code to submit form (add to db)
-      this.crudService.createDocument('halls', this.hall);
-      this.dismissModal();
+      if (this.hallForm.valid) {
+        // Proceed with form submission
+        this.crudService.createDocument('halls', this.hallForm.value);
+        this.dismissModal();
+      } else {
+        console.log('Form is invalid. Please check the fields.');
+      }
     } catch (error) {
       console.error('Error submitting form', error);
     }
   }
-
 
   dismissModal() {
     try {
@@ -46,6 +61,4 @@ export class HallModalPage implements OnInit {
   ngOnInit() {
     console.log('HallModalPage initialized');
   }
-
-
 }
