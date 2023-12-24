@@ -29,13 +29,17 @@ export class ChatPage implements OnInit {
               private alertController : AlertController,
               ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.receiverId = this.activatedRoute.snapshot.paramMap.get('receiverId');
     // subscribe to the messages observable
-    // this.messages$ = collectionData<Message>(query(collection(this.crudService.firestore, 'messages'), where('senderId', 'in', [this.currentUserId, this.receiverId]), where('receiverId', 'in', [this.currentUserId, this.receiverId]));
+    this.messages$ = await this.crudService.getMessages(this.currentUserId, this.receiverId);
   }
 
   async sendMessage(){
+    if(this.msg.trim() === ''){
+      return;
+    }
+
     if(
       !this.crudService.sendMessage(this.currentUserId, this.receiverId, this.msg)
       ){

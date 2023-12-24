@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Firestore } from '@angular/fire/firestore';
 import { collection, collectionData, doc, addDoc, getDoc, updateDoc, deleteDoc, getDocs, DocumentReference, QuerySnapshot } from '@angular/fire/firestore';
-import { DocumentData, query, where } from 'firebase/firestore';
+import { DocumentData, or, orderBy, query, where } from 'firebase/firestore';
 import { Observable, of, combineLatest, pipe, from, } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UtilityService } from './utility.service';
@@ -568,8 +568,13 @@ async getEventsByHallID(hallId: string): Promise<any[]> {
     }
   }
 
-  // async getMessages(senderId : any, receiverId : any) : Promise<any[]>{ 
-    
+  async getMessages(senderId : any, receiverId : any) : Promise<any>{ 
+    const q = query(collection(this.firestore, 'messages'), orderBy('timestamp', 'asc'),  where('sender_id', 'in', [senderId, receiverId]));
+
+    this.messages$ = collectionData(q) as Observable<Message[]>;
+
+    return this.messages$;
+
     
     // let messages : any[] = [];
     // try {
@@ -593,7 +598,7 @@ async getEventsByHallID(hallId: string): Promise<any[]> {
     //   console.error("Error getting documents: ", error);
     //   return [];
     // }
-  // }
+  }
 
 
 }

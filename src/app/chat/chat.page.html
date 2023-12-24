@@ -11,7 +11,9 @@
     </ion-toolbar>
   </ion-header>
 
-  
+  <ion-item *ngFor="let msg of this.messages$ | async">
+    {{msg.message}}
+  </ion-item>
 
 
 </ion-content>
