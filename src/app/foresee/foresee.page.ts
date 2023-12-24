@@ -27,7 +27,7 @@ export class ForeseePage implements OnInit {
     const loader = await this.loading.create({message: 'loading...'});
     loader.present();
     try{
-    this.eventsOfHall = await this.crud.getEventsByHallID(this.hallID);
+    this.eventsOfHall = (await this.crud.getEventsByHallID(this.hallID)).filter((val:any)=>{return val.status === 'approved'});
     this.eventsOfHall.forEach((event:any) => {
       this.eventSource.push({
         title: event.name,
