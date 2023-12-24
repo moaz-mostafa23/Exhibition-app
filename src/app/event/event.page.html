@@ -15,36 +15,40 @@
   </ion-header>
 
   <img src="https://placehold.co/600x400" alt="">
-  <br>
+  <div class="ion-padding">
 
-  <!-- 
-    Event Agenda
+    <br>
+    
+    <!-- 
+      Event Agenda
     Speakers
     Exhibition/ Floor Plan
     Registration (for attendees)
     Attendees
     Updates
-   -->
-   <h2>Agenda</h2> <br>
+  -->
+  <h3>Agenda</h3>
    {{this.event.agenda}}
    <br>
+   
+   <h2>Speakers</h2>
+   <ion-label *ngFor="let name of this.speakers">{{name}}</ion-label> <br>
+   <br>
+   <br>
+
+   <h2>Exhibition/ Floor Plan</h2> <br>
+   {{this.floorPlan}} <br>
+   
    <!--    
-
-  <h2>Speakers</h2> <br>
-  {{this.event.speakers}} <br>
-  <br>
-
-  <h2>Exhibition/ Floor Plan</h2> <br>
-  {{this.event.floorPlan}} <br>
-
   <h2>Registration</h2> <br>
   {{this.event.registration}} <br>
-
+  
   <h2>Attendees</h2> <br>
   {{this.event.attendees}} <br>
-
+  
   <h2>Updates</h2> <br>
   {{this.event.updates}} <br> -->
-
+  
   <ion-button color="success" (click)="registerEvent()">REGISTER</ion-button>
+</div>
 </ion-content>

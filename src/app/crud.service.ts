@@ -19,6 +19,7 @@ export interface Event {
   hall_name: void;
 }
 
+
 export interface Hall {
   booth_fiting: string;
   capacity: string;
@@ -423,8 +424,25 @@ async getEventsByHallID(hallId: string): Promise<any[]> {
   return events;
 }
 
-  async getEventSpeakers(){
+  async getEventSpeakers(eventName : any) : Promise<string[]>{
+    let eventId = await this.getDocumentIdByUniqueKey('events', 'name', eventName);
+    let speakers : any[] = [];
+    try {
+      const collectionRef = collection(this.firestore, 'speakers');
+      const q = query(collectionRef, where("event_id", "==", eventId));
+      const querySnapshot = await getDocs(q);
 
+    querySnapshot.forEach(
+        (doc) => {
+          let speaker = doc.data()['speaker_name'];
+          speakers.push(speaker);
+        }
+      );
+      return speakers;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return [];
+    }
   }
 
 }

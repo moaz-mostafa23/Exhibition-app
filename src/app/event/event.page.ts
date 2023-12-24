@@ -63,7 +63,7 @@ export class EventPage implements OnInit {
    */
 
   async getEventSpeakers(){
-    
+    this.speakers = await this.crudService.getEventSpeakers(this.event.name);
   }
   registerEvent(){
     
