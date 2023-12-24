@@ -16,6 +16,7 @@ export class EventPage implements OnInit {
   speakers : any[] = [];
   floorPlan : any;
   attendees : any[] = [];
+  updates : any[] = [];
 
   constructor(
     public activatedRoute: ActivatedRoute,
@@ -47,6 +48,7 @@ export class EventPage implements OnInit {
       await this.getEventSpeakers();
       await this.getEventFloorPlan();
       await this.getEventAttendees();
+      await this.getEventUpdates();
 
       loading.dismiss();
     } catch(err){
@@ -149,6 +151,11 @@ export class EventPage implements OnInit {
       // Any calls to load data go here
       event.target.complete();
     }, 1000);
+  }
+
+  async getEventUpdates(){
+    this.updates = await this.crudService.getEventUpdates(this.event.name);
+    console.log(this.updates);
   }
 
 }

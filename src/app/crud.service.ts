@@ -20,6 +20,11 @@ export interface Event {
   hall_name: void;
 }
 
+export interface Update{
+  update_header: string;
+  update_text: string;
+}
+
 
 export interface Hall {
   booth_fiting: string;
@@ -519,4 +524,29 @@ async getEventsByHallID(hallId: string): Promise<any[]> {
     }
   }
 
+  async getEventUpdates(eventName : any) : Promise<any[]>{
+    let eventId = await this.getDocumentIdByUniqueKey('events', 'name', eventName);
+    let updates : Update[] = [];
+
+    try {
+      const collectionRef = collection(this.firestore, 'updates');
+      const q = query(collectionRef, where("event_id", "==", eventId));
+      const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach(
+        (doc) => {
+          updates.push({
+            update_header: doc.data()['update_header'],
+            update_text: doc.data()['update_text'],
+          });
+
+        }
+        );
+        console.log("update: " + updates.toString()); 
+      return updates;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return [];
+    }
+  }
 }

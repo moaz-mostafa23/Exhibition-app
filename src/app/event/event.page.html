@@ -18,7 +18,7 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <img src="https://placehold.co/600x400" alt="">
+  <img src="{{this.event.picture[0]}}" alt="">
   <div class="ion-padding">
 
     <br>
@@ -38,20 +38,27 @@
    <h3>Speakers</h3>
    <ion-text *ngFor="let name of this.speakers; let i = index;">{{i+1}}. {{name}}<br></ion-text> 
    <br>
-   <br>
 
    <h3>Exhibition/ Floor Plan</h3>
    {{this.floorPlan}} <br>
    
    <h3>Attendees</h3>
    <ion-text *ngFor="let attendee of this.attendees; let i = index;">{{i+1}}. {{attendee}} <br></ion-text>
-   <!--    
-  
-  <h2>Updates</h2> <br>
-  {{this.event.updates}} <br> -->
-  </div>
+   
+
+   <h3>Updates</h3>
+   <ion-card *ngFor="let update of this.updates; let i = index;">
+      <ion-card-header>
+        <ion-card-title>{{update.update_header}}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        {{update.text}}
+      </ion-card-content>  
+  </ion-card> 
+   <br>
+
+   </div>
 </ion-content>
-<br>
 <ion-footer>
   <ion-button color="success" expand="full" size="large" (click)="registerEvent()">REGISTER</ion-button>
 </ion-footer>
