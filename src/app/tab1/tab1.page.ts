@@ -110,38 +110,6 @@ export class Tab1Page implements OnInit, OnDestroy {
       alert.present();
       console.log(err);
     }
-
-    // save a copy for later
-    // try {
-    //   this.crudService.getDocuments('events').subscribe((events) => {
-    //     this.events = events as Event[];
-    //     this.eventsCopy = events as Event[];
-
-    //     // comment for now as it gives me invalid date
-    //     // this.events.forEach(element => {
-    //     //   element.start_date = this.utilityService.convertFirebaseTimestamp(element.start_date);
-    //     //   element.end_date = this.utilityService.convertFirebaseTimestamp(element.end_date);
-    //     // })
-    //     // // same for the eventsCopy
-    //     // this.eventsCopy.forEach(element => {
-    //     //   element.start_date = this.utilityService.convertFirebaseTimestamp(element.start_date);
-    //     //   element.end_date = this.utilityService.convertFirebaseTimestamp(element.end_date);
-    //     // });
-
-    //     console.log(this.events);
-    //     console.log(this.eventsCopy);
-    //     loading.dismiss();
-    //   });
-    // } catch (err) {
-    //   let alert = await this.alertController.create({
-    //     header: 'Error',
-    //     message: 'There was an error loading the events. Please try again later.',
-    //     buttons: ['OK']
-    //   });
-    //   loading.dismiss();
-    //   alert.present();
-    //   console.log(err);
-    // }
   }
   async openHallModal() {
     try {
