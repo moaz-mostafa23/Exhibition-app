@@ -51,6 +51,10 @@ const routes: Routes = [
   },  {
     path: 'update-event',
     loadChildren: () => import('./update-event/update-event.module').then( m => m.UpdateEventPageModule)
+  },
+  {
+    path: 'foresee',
+    loadChildren: () => import('./foresee/foresee.module').then( m => m.ForeseePageModule)
   }
 
 

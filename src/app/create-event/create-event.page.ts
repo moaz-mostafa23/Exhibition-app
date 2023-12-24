@@ -78,7 +78,7 @@ export class CreateEventPage implements OnInit {
       event_id: eventDocRef.id,
       speaker_name: this.eventForm.controls['speakerName'].value
     };
-    await this.crud.createDocument('speakers', newSpeaker);
+    await this.crud.createDocument('speakers', {...newSpeaker, hall_name: this.eventForm.controls['hallName'].value});
   
     // Create a new update
     const newUpdate = {

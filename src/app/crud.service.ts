@@ -331,33 +331,41 @@ export class CrudService {
     }
   }
 
-  async isEventReserved(start_date: string, end_date: string, hallId: string): Promise<Observable<string>> {
+  async isEventReserved(start_date: string, end_date: string, hallId: string): Promise<string> {
     // Convert the start and end dates to JavaScript Date objects
     const eventStartDate = new Date(start_date);
     const eventEndDate = new Date(end_date);
-
-    // Get the hall document from Firestore
-    const hallDoc = this.getDocumentById('halls', hallId);
-
-    // Combine the event and hall observables
-    return from(hallDoc).pipe(
-      map((hall: any) => {
-        // Convert the hall's start and end dates to JavaScript Date objects
-        const hallStartDate = new Date(hall.start_date);
-        const hallEndDate = new Date(hall.end_date);
-
-        // Check if the event start and end dates are within the hall's available dates
-        if (eventStartDate >= hallStartDate && eventEndDate <= hallEndDate) {
-          // If there is a conflict, return a message to the user
-          return 'Reserved';
-        } else {
-          // If there is no conflict, the event is not reserved
-          return 'Not reserved';
-        }
-      })
-    );
+  
+    // Check if the start date is later than the end date
+    if (eventStartDate > eventEndDate) {
+      // Start date is later than end date
+      return 'Reserved';
+    }
+  
+    // Create a query to find the events in the same hall
+    const q = query(collection(this.firestore, 'events'), where('hall_id', '==', hallId));
+  
+    // Execute the query
+    const querySnapshot = await getDocs(q);
+  
+    // Check each event for a date conflict
+    for (let doc of querySnapshot.docs) {
+      const eventData = doc.data();
+      const eventStart = eventData['start_date'].toDate();
+      const eventEnd = eventData['end_date'].toDate();
+  
+      // Check if the new event's date range overlaps with the existing event's date range
+      if ((eventStartDate >= eventStart && eventStartDate <= eventEnd) || 
+          (eventEndDate >= eventStart && eventEndDate <= eventEnd)) {
+        // Date conflict found
+        return 'Reserved';
+      }
+    }
+  
+    // No date conflict found
+    return 'Not reserved';
   }
-
+  
   getAllDocumentsByCollectionUsingPromise(collectionName: string): Promise<DocumentData[]> {
     return new Promise<DocumentData[]>((resolve, reject) => {
       getDocs(collection(this.firestore, collectionName))
@@ -379,7 +387,7 @@ export class CrudService {
       const q = query(collectionRef, where("status", "==", "approved"));
       const querySnapshot = await getDocs(q);
 
-      querySnapshot.forEach(
+    querySnapshot.forEach(
         (doc) => {
           let event = doc.data() as Event;
           event.start_date = this.utilityService.convertFirebaseTimestamp(event.start_date);
@@ -394,6 +402,26 @@ export class CrudService {
       return [];
     }
   }
+
+async getEventsByHallID(hallId: string): Promise<any[]> {
+  // Get the document ID of the hall using its name
+
+  // Create a query to find the events in the same hall
+  const q = query(collection(this.firestore, 'events'), where('hall_id', '==', hallId));
+
+  // Execute the query
+  const querySnapshot = await getDocs(q);
+
+  // Create an array to store the event data
+  let events:any = [];
+
+  // Add each event data to the array
+  querySnapshot.forEach((doc) => {
+    events.push(doc.data());
+  });
+
+  return events;
+}
 
   async getEventSpeakers(){
 

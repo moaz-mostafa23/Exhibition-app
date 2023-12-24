@@ -14,8 +14,8 @@ import 'firebase/compat/firestore';
 export class UpdateEventPage implements OnInit {
   eventID:any;
   eventObj:any;
-  start_date:Date = new Date();
-  end_date:Date = new Date();
+  start_date:string = '';
+  end_date:string = '';
   name:string = ''
   agenda:string = ''
   update_text:string = ''
@@ -97,6 +97,18 @@ export class UpdateEventPage implements OnInit {
         return;
       }
   
+      // Check if the event's date range conflicts with any existing events in the same hall
+      const isReserved = await this.crud.isEventReserved(this.start_date, this.end_date, this.eventObj.hall_id);
+      if (isReserved === 'Reserved') {
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: 'The event conflicts with an existing event.',
+          buttons: ['OK']
+        });
+        await alert.present();
+        return;
+      }
+  
       const loading = await this.loadingController.create({
         message: 'Updating event...'
       });
@@ -130,14 +142,15 @@ export class UpdateEventPage implements OnInit {
         } else {
           await this.crud.createDocument('speakers', {...speakersData, event_id: this.eventID});
         }
+        
   
-        await loading.dismiss();
-        await this.modal.dismiss();
-      } catch (error) {
+      await loading.dismiss();
+      await this.modal.dismiss();
+      }catch (error) {
         console.error("Error updating event: ", error);
         await loading.dismiss();
       }
-    }else{
+    } else {
       const alert = await this.alertController.create({
         header: 'Error',
         message: 'The inputs are invalid.',
@@ -146,6 +159,7 @@ export class UpdateEventPage implements OnInit {
       await alert.present();
     }
   }
+  
   
   
 

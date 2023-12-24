@@ -26,12 +26,12 @@
 
   <!-- ignore the error here, it works -->
   <!-- Start of attendee screen -->
-  <div *ngIf="userType=='attendee'">
-
+  <div *ngIf="userType ==='attendee'">
+    
     <ion-refresher slot="fixed" (ionRefresh)="handleAttendeeHomeRefresh($event)">
       <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
-    
+
     <ion-searchbar (ionInput)="searchEvents($event)"></ion-searchbar>
     <!-- attendee.user@email.com, pass: admin123 -->
     <ion-list>
@@ -66,12 +66,11 @@
   <!-- End of Attendee Screen  -->
 
   <!-- Start of client screen -->
-  <div *ngIf="userType=='client'">
+  <div *ngIf="userType ==='client'">
 
     <ion-refresher slot="fixed" (ionRefresh)="handleClientHomeRefresh($event)">
       <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
-    
 
     <ion-searchbar (ionInput)="searchHalls($event)"></ion-searchbar>
     <!-- attendee.user@email.com, pass: admin123 -->
@@ -99,8 +98,17 @@
       >
         Learn More
       </ion-button>
+      <div style="display: flex; justify-content: flex-end; align-items: center;">
+        <ion-button size="small" slot="end" (click)="openForesee(hall.name)" >
+          <ion-icon size="default"  name="calendar-outline"></ion-icon>
+        </ion-button>
+       
+      </div>
+      
           </ion-card-content>
             </ion-card>
+            
+            
         </ion-list>
   </div>
   <!-- End of client Screen -->
