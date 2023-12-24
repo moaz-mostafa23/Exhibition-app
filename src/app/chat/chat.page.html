@@ -1,0 +1,66 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>chat</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<style>
+  .messages {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  border-radius: 50%;
+  margin-bottom: 8px;
+}
+
+.message-text {
+  padding: 10px 15px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.my-message {
+  align-self: flex-end;
+  background-color: #4CAF50; /* Green background for my messages */
+  color: white;
+}
+
+.other-message {
+  align-self: flex-start;
+  background-color: #e0e0e0; /* Light grey background for other messages */
+  color: black;
+}
+
+</style>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">chat</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="messages">
+    <div *ngFor="let msg of this.messages$ | async" [class]="(msg.sender_id === this.currentUserId) ? 'my-message' : 'other-message'">
+      <div class="message-text">{{ msg.message }}</div>
+      <br>
+      {{msg.timestamp}}
+    </div>
+  </div>
+
+
+</ion-content>
+<ion-footer>
+  <ion-footer>
+    <ion-toolbar>
+      <ion-item>
+        <ion-input [(ngModel)]="msg" placeholder="Type a message"></ion-input>
+        <ion-button (click)="sendMessage()" fill="solid" color="primary" size="medium" slot="end">
+          <ion-icon name="send"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-toolbar>
+  </ion-footer>
+</ion-footer>

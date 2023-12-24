@@ -48,13 +48,18 @@ const routes: Routes = [
   {
     path: 'create-event',
     loadChildren: () => import('./create-event/create-event.module').then( m => m.CreateEventPageModule)
-  },  {
+  },
+  {
     path: 'update-event',
     loadChildren: () => import('./update-event/update-event.module').then( m => m.UpdateEventPageModule)
   },
   {
     path: 'foresee',
     loadChildren: () => import('./foresee/foresee.module').then( m => m.ForeseePageModule)
+  },
+  {
+    path: 'chat/:receiverId',
+    loadChildren: () => import('./chat/chat.module').then( m => m.ChatPageModule)
   }
 
 
