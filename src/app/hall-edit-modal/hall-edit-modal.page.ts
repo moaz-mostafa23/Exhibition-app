@@ -8,6 +8,7 @@ import { CrudService, Hall } from '../crud.service';
 })
 export class HallEditModalPage implements OnInit {
   editedHall: Hall = {} as Hall;
+  hallName = this.editedHall.name;
   constructor(private modalController: ModalController, private crudService: CrudService) { }
   async updateHall() {
     try {
