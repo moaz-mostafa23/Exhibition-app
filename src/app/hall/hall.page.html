@@ -22,36 +22,43 @@
     </ion-card-header>
   
     <ion-card-content>
-      <p>
-       Booth fitting:  {{hall.booth_fiting}}
-      </p>
-      <p>
-       Contact info:  {{hall.contact_info}}
-      </p>
-      <ion-button (click)="deleteHall(hall.name)"             color="primary" 
-              size="small" 
-              slot="start" color="danger">
-                <ion-icon name="trash"></ion-icon> Delete
-              </ion-button>
+      <p>Booth fitting:  {{hall.booth_fiting}}</p>
+      <p>Contact info:  {{hall.contact_info}}</p>
+      <ion-button (click)="deleteHall(hall.name)" color="primary" size="small" slot="start" color="danger">
+        <ion-icon name="trash"></ion-icon> Delete
+      </ion-button>
     </ion-card-content>
   </ion-card>
-  <div>
-    <h1>Reservation History</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>Event Name</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let event of events">
-          <td>{{ event.name }}</td>
-          <td>{{ event.start_date }}</td>
-          <td>{{ event.end_date }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  
+  <ion-item-group>
+    <ion-item-divider (click)="toggleTable()">
+      <ion-label>Reservation History</ion-label>
+      <ion-icon name="chevron-down" slot="end" *ngIf="!isTableShown()"></ion-icon>
+      <ion-icon name="chevron-up" slot="end" *ngIf="isTableShown()"></ion-icon>
+    </ion-item-divider>
+    <ion-item *ngIf="isTableShown()">
+      <ion-label>Filter by:</ion-label>
+      <ion-toggle [(ngModel)]="selectedOption" (ionChange)="loadReservationHistory()"></ion-toggle>
+      <span>{{ selectedOption === 'last7days' ? 'Last 7 days' : 'Last 30 days' }}</span>
+    </ion-item>
+    <ion-item *ngIf="isTableShown()">
+      <table>
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let event of events">
+            <td>{{ event.name }}</td>
+            <td>{{ event.start_date }}</td>
+            <td>{{ event.end_date }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </ion-item>
+  </ion-item-group>
+  
 </ion-content>

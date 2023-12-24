@@ -1,9 +1,8 @@
+// hall-modal.module.ts
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // Import ReactiveFormsModule
 import { IonicModule } from '@ionic/angular';
-
 import { HallModalPageRoutingModule } from './hall-modal-routing.module';
 
 import { HallModalPage } from './hall-modal.page';
@@ -12,9 +11,10 @@ import { HallModalPage } from './hall-modal.page';
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     IonicModule,
     HallModalPageRoutingModule
   ],
-  declarations: [HallModalPage]
+  declarations: [HallModalPage],
 })
-export class HallModalPageModule {}
+export class HallModalPageModule { }
