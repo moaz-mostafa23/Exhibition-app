@@ -1,0 +1,41 @@
+.custom-card {
+    --ion-background-color: #f5f5f5; /* Set your desired background color */
+    --ion-padding: 20px; /* Adjust padding */
+  }
+  ion-card-title {
+    font-family: 'Your Custom Font', sans-serif;
+    font-size: 1.5em;
+  }
+  
+  ion-text {
+    font-size: 0.8em;
+  }
+  
+  p {
+    font-size: 0.9em;
+  }
+  ion-icon {
+    font-size: 1.5em;
+  }
+  
+  ion-icon[color="danger"] {
+    color: #ff0000; /* Set your desired color for danger */
+  }
+  
+  ion-icon[color="success"] {
+    color: #00ff00; /* Set your desired color for success */
+  }
+  ion-button {
+    --ion-background-color: #3498db; /* Set your desired background color */
+    --ion-text-color: #fff; /* Set your desired text color */
+    --ion-border-radius: 10px; /* Set your desired border radius */
+  }
+  
+  ion-button:disabled {
+    --ion-background-color: #bdc3c7; /* Set your desired background color for disabled state */
+  }
+  ion-input {
+    --padding-end: 10px; /* Adjust padding */
+    --padding-start: 10px; /* Adjust padding */
+  }
+          
