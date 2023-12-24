@@ -13,6 +13,7 @@ export class EventPage implements OnInit {
   eventName: string = '';
   event : Event = {} as Event;
   speakers : any[] = [];
+  floorPlan : any;
 
   constructor(
     public activatedRoute: ActivatedRoute,
@@ -38,8 +39,12 @@ export class EventPage implements OnInit {
         console.log("Event details:");
         this.event = event as Event;
         console.log(this.event);
-        loading.dismiss();
       });
+
+      await this.getEventSpeakers();
+      await this.getEventFloorPlan();
+
+      loading.dismiss();
     } catch(err){
       let alert = await this.alertController.create({
         header: 'Error',
@@ -65,6 +70,11 @@ export class EventPage implements OnInit {
   async getEventSpeakers(){
     this.speakers = await this.crudService.getEventSpeakers(this.event.name);
   }
+
+  async getEventFloorPlan(){
+    this.floorPlan = await this.crudService.getEventFloorPlan(this.event.hall_id);
+  }
+
   registerEvent(){
     
   }

@@ -445,4 +445,21 @@ async getEventsByHallID(hallId: string): Promise<any[]> {
     }
   }
 
+  async getEventFloorPlan(hallId : any) : Promise<any>{
+    let floorPlan : any;
+    try {
+      const collectionRef = collection(this.firestore, 'halls');
+      const q = query(collectionRef, where("id", "==", hallId));
+      const querySnapshot = await getDoc(doc(this.firestore, 'halls/' + hallId));
+
+      if(querySnapshot.exists()){
+        floorPlan = querySnapshot.data()['floor_plan'];
+      }
+      return floorPlan;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return null;
+    }
+  }
+
 }
