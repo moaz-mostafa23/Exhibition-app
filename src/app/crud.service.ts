@@ -549,4 +549,15 @@ async getEventsByHallID(hallId: string): Promise<any[]> {
       return [];
     }
   }
+
+  async sendMessage(senderId : any, receiverId : any, message : any){
+    try{
+      const collectionRef = collection(this.firestore, 'messages');
+      const docRef = await addDoc(collectionRef, {sender_id: senderId, receiver_id: receiverId, message: message});
+      return true;
+    }catch(error){
+      console.log("Error sending message");
+      return false;
+    }
+  }
 }

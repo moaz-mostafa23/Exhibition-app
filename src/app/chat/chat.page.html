@@ -10,4 +10,18 @@
       <ion-title size="large">chat</ion-title>
     </ion-toolbar>
   </ion-header>
+
+
 </ion-content>
+<ion-footer>
+  <ion-footer>
+    <ion-toolbar>
+      <ion-item>
+        <ion-input [(ngModel)]="msg" placeholder="Type a message"></ion-input>
+        <ion-button (click)="sendMessage()" fill="solid" color="primary" size="medium" slot="end">
+          <ion-icon name="send"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-toolbar>
+  </ion-footer>
+</ion-footer>
