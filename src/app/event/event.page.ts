@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CrudService } from '../crud.service';
 import { Event } from '../crud.service';
 import { AlertController, LoadingController } from '@ionic/angular';
+import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-event',
   templateUrl: './event.page.html',
@@ -21,6 +22,7 @@ export class EventPage implements OnInit {
     public crudService : CrudService,
     public loadingController : LoadingController,
     public alertController : AlertController,
+    public authService : AuthService,
   ) { }
 
   ngOnInit() {
@@ -81,8 +83,42 @@ export class EventPage implements OnInit {
     this.attendees = await this.crudService.getEventAttendees(this.event.name);
   }
 
-  registerEvent(){
-    
+  async registerEvent(){
+    let loading = await this.loadingController.create({
+      message: "Registering for event...",
+    });
+
+    loading.present();
+
+    const currentUser = this.authService.getCurrentUser();
+    if(currentUser == null){
+      console.log("User not logged in");
+      loading.dismiss();
+      return;
+    } else{
+      if(await this.crudService.registerAttendeeInEvent(this.event.name, currentUser?.uid)){
+        loading.dismiss();
+
+        let alert = await this.alertController.create({
+          header: 'Success',
+          message: 'Successfully registered for event!',
+          buttons: ['OK']
+        });
+        alert.present();
+      } else{
+        loading.dismiss();
+
+        let alert = await this.alertController.create({
+          header: 'Error',
+          message: 'Error registering for event, please try again later!',
+          buttons: ['OK']
+        });
+        alert.present();
+      }
+      
+    }
+    // console.log("user id to register: " + currentUser?.uid);
+    loading.dismiss();
   }
 
 }

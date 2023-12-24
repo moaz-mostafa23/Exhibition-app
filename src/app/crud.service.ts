@@ -5,6 +5,7 @@ import { DocumentData, query, where } from 'firebase/firestore';
 import { Observable, of, combineLatest, pipe, from, } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UtilityService } from './utility.service';
+import { AuthService } from './auth.service';
 
 
 export interface Event {
@@ -37,7 +38,7 @@ export class CrudService {
   public events$: Observable<DocumentData[]> = this.getDocuments('events');
 
 
-  constructor(private firestore: Firestore, private utilityService : UtilityService) { }
+  constructor(private firestore: Firestore, private utilityService : UtilityService,) { }
 
   async createDocument(collectionName: string, data: any): Promise<DocumentReference<DocumentData> | any> {
     try {
@@ -498,6 +499,19 @@ async getEventsByHallID(hallId: string): Promise<any[]> {
     } catch (error) {
       console.error("Error getting documents: ", error);
       return null;
+    }
+  }
+
+  async registerAttendeeInEvent(eventName : any, attendeeId : any) : Promise<boolean>{
+    try{
+
+      let eventId = await this.getDocumentIdByUniqueKey('events', 'name', eventName);
+      const collectionRef = collection(this.firestore, 'registrations');
+      const docRef = await addDoc(collectionRef, {event_id: eventId, attendee_id: attendeeId});
+      return true;
+    }catch(error){
+      console.log("Error registering event");
+      return false;
     }
   }
 
