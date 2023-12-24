@@ -14,6 +14,10 @@
     </ion-toolbar>
   </ion-header>
 
+  <ion-refresher slot="fixed" (ionRefresh)="refreshViewEventPage($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <img src="https://placehold.co/600x400" alt="">
   <div class="ion-padding">
 
@@ -32,7 +36,7 @@
    <br>
    
    <h3>Speakers</h3>
-   <ion-text *ngFor="let name of this.speakers">{{name}}<br></ion-text> 
+   <ion-text *ngFor="let name of this.speakers; let i = index;">{{i+1}}. {{name}}<br></ion-text> 
    <br>
    <br>
 
@@ -40,7 +44,7 @@
    {{this.floorPlan}} <br>
    
    <h3>Attendees</h3>
-   <ion-text *ngFor="let attendee of this.attendees">{{attendee}} <br></ion-text>
+   <ion-text *ngFor="let attendee of this.attendees; let i = index;">{{i+1}}. {{attendee}} <br></ion-text>
    <!--    
   
   <h2>Updates</h2> <br>

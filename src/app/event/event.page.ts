@@ -87,15 +87,34 @@ export class EventPage implements OnInit {
     let loading = await this.loadingController.create({
       message: "Registering for event...",
     });
-
     loading.present();
 
     const currentUser = this.authService.getCurrentUser();
-    if(currentUser == null){
+    if(currentUser == null || currentUser == undefined){
       console.log("User not logged in");
       loading.dismiss();
       return;
     } else{
+      // first check if the user is already registered
+      let isRegistered = false;
+      this.attendees.forEach((attendee) => {
+        if(currentUser.displayName == attendee.name){
+          isRegistered = true;
+        }
+      });
+
+      if(isRegistered){
+        loading.dismiss();
+
+        let alert = await this.alertController.create({
+          header: 'Failed',
+          message: 'You are already registered for this event!',
+          buttons: ['OK']
+        });
+        alert.present();
+        return;
+      }
+
       if(await this.crudService.registerAttendeeInEvent(this.event.name, currentUser?.uid)){
         loading.dismiss();
 
@@ -105,6 +124,8 @@ export class EventPage implements OnInit {
           buttons: ['OK']
         });
         alert.present();
+        // getting new attendees list
+        await this.getEventAttendees();
       } else{
         loading.dismiss();
 
@@ -119,6 +140,15 @@ export class EventPage implements OnInit {
     }
     // console.log("user id to register: " + currentUser?.uid);
     loading.dismiss();
+  }
+
+  async refreshViewEventPage(event : any){
+    await this.getEventDetails();
+
+    setTimeout(() => {
+      // Any calls to load data go here
+      event.target.complete();
+    }, 1000);
   }
 
 }
