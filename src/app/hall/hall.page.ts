@@ -123,6 +123,15 @@ export class HallPage implements OnInit {
       console.error('Error loading reservation history:', error);
     }
   }
+  showTable = false;
+
+  toggleTable(): void {
+    this.showTable = !this.showTable;
+  }
+
+  isTableShown(): boolean {
+    return this.showTable;
+  }
 
 
 
