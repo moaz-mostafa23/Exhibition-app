@@ -8,7 +8,7 @@ import { UtilityService } from './utility.service';
 
 
 export interface Event {
-  agendas: string;
+  agenda: string;
   client_id: string;
   end_date: string;
   hall_id: string;
@@ -17,7 +17,6 @@ export interface Event {
   start_date: string;
   status: string;
   hall_name: void;
-  description: string;
 }
 
 export interface Hall {
@@ -394,6 +393,10 @@ export class CrudService {
       console.error("Error getting documents: ", error);
       return [];
     }
+  }
+
+  async getEventSpeakers(){
+
   }
 
 }

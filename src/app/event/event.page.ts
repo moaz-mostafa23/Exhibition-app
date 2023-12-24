@@ -12,6 +12,7 @@ export class EventPage implements OnInit {
 
   eventName: string = '';
   event : Event = {} as Event;
+  speakers : any[] = [];
 
   constructor(
     public activatedRoute: ActivatedRoute,
@@ -52,6 +53,18 @@ export class EventPage implements OnInit {
     }
   }
 
+  /** 
+    Event Agenda done
+    Speakers
+    Exhibition/ Floor Plan
+    Registration (for attendees)
+    Attendees
+    Updates
+   */
+
+  async getEventSpeakers(){
+    
+  }
   registerEvent(){
     
   }
