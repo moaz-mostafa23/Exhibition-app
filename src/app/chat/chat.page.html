@@ -4,6 +4,37 @@
   </ion-toolbar>
 </ion-header>
 
+<style>
+  .messages {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  border-radius: 50%;
+  margin-bottom: 8px;
+}
+
+.message-text {
+  padding: 10px 15px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.my-message {
+  align-self: flex-end;
+  background-color: #4CAF50; /* Green background for my messages */
+  color: white;
+}
+
+.other-message {
+  align-self: flex-start;
+  background-color: #e0e0e0; /* Light grey background for other messages */
+  color: black;
+}
+
+</style>
+
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
@@ -11,9 +42,13 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-item *ngFor="let msg of this.messages$ | async">
-    {{msg.message}}
-  </ion-item>
+  <div class="messages">
+    <div *ngFor="let msg of this.messages$ | async" [class]="(msg.sender_id === this.currentUserId) ? 'my-message' : 'other-message'">
+      <div class="message-text">{{ msg.message }}</div>
+      <br>
+      {{msg.timestamp}}
+    </div>
+  </div>
 
 
 </ion-content>
