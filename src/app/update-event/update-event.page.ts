@@ -116,7 +116,7 @@ export class UpdateEventPage implements OnInit {
           await this.crud.updateDocument('updates', updatesID, updatesData);
           console.log('Updates document updated');
         } else {
-          console.log('Updates document not found or id is undefined');
+          await this.crud.createDocument('updates',{...updatesData, event_id: this.eventID});
         }
   
         const speakersData = {
@@ -128,7 +128,7 @@ export class UpdateEventPage implements OnInit {
           await this.crud.updateDocument('speakers', speakerID, speakersData);
           console.log('Speakers document updated');
         } else {
-          console.log('Speakers document not found or id is undefined');
+          await this.crud.createDocument('speakers', {...speakersData, event_id: this.eventID});
         }
   
         await loading.dismiss();

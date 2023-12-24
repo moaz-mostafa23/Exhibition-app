@@ -96,10 +96,23 @@
             <ion-card-header>
               <ion-card-title>{{penEvent.name}}</ion-card-title>
               <ion-card-subtitle>Status: <ion-button size="small" color="warning">Pending</ion-button></ion-card-subtitle>
+              <ion-fab style="position: absolute; right: 0;">
+                <ion-fab-button size="small" color="success">
+                  <ion-icon name="chatbubble"></ion-icon>
+                </ion-fab-button>
+              </ion-fab>
             </ion-card-header>
             <ion-card-content>
+              <div style="position: relative;">
               <ion-img [src]="penEvent.picture[0]"></ion-img>
-              <!-- Add your buttons here -->
+              <ion-button size="small" color="success" (click)="approveEvent(penEvent.name)" >Approve</ion-button>
+              <ion-button size="small" color="danger" (click)="disproveEvent(penEvent.name)">Disapprove</ion-button>
+              <ion-button size="small" color="primary" (click)="updateEvent(penEvent.name)">Update</ion-button>
+              <ion-button size="small" color="danger" (click)="deleteEvent(penEvent.name)">Delete</ion-button>
+
+              </div>
+             
+              
             </ion-card-content>
           </ion-card>
         </ion-accordion>
@@ -113,10 +126,23 @@
             <ion-card-header>
               <ion-card-title>{{approEvent.name}}</ion-card-title>
               <ion-card-subtitle>Status: <ion-button size="small" color="success">Approved</ion-button></ion-card-subtitle>
+              <ion-fab style="position: absolute; right: 0;">
+                <ion-fab-button size="small" color="success">
+                  <ion-icon name="chatbubble"></ion-icon>
+                </ion-fab-button>
+              </ion-fab>
             </ion-card-header>
             <ion-card-content>
-              <ion-img [src]="approEvent.picture[0]"></ion-img>
-              <!-- Add your buttons here -->
+              <div style="position: relative;">
+                <ion-img [src]="approEvent.picture[0]"></ion-img>
+                <ion-button size="small" color="success" (click)="approveEvent(approEvent.name)" >Approve</ion-button>
+                <ion-button size="small" color="danger" (click)="disproveEvent(approEvent.name)">Disapprove</ion-button>
+                <ion-button size="small" color="primary" (click)="updateEvent(approEvent.name)">Update</ion-button>
+                <ion-button size="small" color="danger" (click)="deleteEvent(approEvent.name)">Delete</ion-button>
+                
+                 
+  
+                </div>
             </ion-card-content>
           </ion-card>
         </ion-accordion>
@@ -130,10 +156,23 @@
             <ion-card-header>
               <ion-card-title>{{notEvent.name}}</ion-card-title>
               <ion-card-subtitle>Status: <ion-button size="small" color="danger">Not Approved</ion-button></ion-card-subtitle>
+              <ion-fab style="position: absolute; right: 0;">
+                <ion-fab-button size="small" color="success">
+                  <ion-icon name="chatbubble"></ion-icon>
+                </ion-fab-button>
+              </ion-fab>
             </ion-card-header>
             <ion-card-content>
-              <ion-img [src]="notEvent.picture[0]"></ion-img>
-              <!-- Add your buttons here -->
+              <div style="position: relative;">
+                <ion-img [src]="notEvent.picture[0]"></ion-img>
+                <ion-button size="small" color="success" (click)="approveEvent(notEvent.name)" >Approve</ion-button>
+                <ion-button size="small" color="danger" (click)="disproveEvent(notEvent.name)">Disapprove</ion-button>
+                <ion-button size="small" color="primary" (click)="updateEvent(notEvent.name)">Update</ion-button>
+              <ion-button size="small" color="danger" (click)="deleteEvent(notEvent.name)">Delete</ion-button>
+                
+                  
+  
+                </div>
             </ion-card-content>
           </ion-card>
         </ion-accordion>

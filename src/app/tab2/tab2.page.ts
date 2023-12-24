@@ -203,6 +203,49 @@ async updateEvent(eventName:any){
   return await modal.present();
 }
 
+async approveEvent(eventName:any){
+  const loader = await this.loading.create({message: 'loading...'});
+  loader.present();
+  const eventDocID:any = await this.crud.getDocumentIdByUniqueKey('events','name',eventName);
+  const eventObj = await this.crud.getDocumentById('events',eventDocID);
+  if(eventObj.status === 'approved'){
+    loader.dismiss();
+    const alert = await this.alertController.create({header: 'Already Approved', buttons: ['Ok']});
+    return alert.present();
+  }
+  try{
+    await this.crud.updateDocument('events',eventDocID, {status: 'approved'});
+    await loader.dismiss();
+    await this.ngOnInit();
+  }catch(err){
+    loader.dismiss();
+    console.log(err);
+  }
+
+}
+
+async disproveEvent(eventName:any){
+  const loader = await this.loading.create({message: 'loading...'});
+  loader.present();
+  const eventDocID:any = await this.crud.getDocumentIdByUniqueKey('events','name',eventName);
+  const eventObj = await this.crud.getDocumentById('events',eventDocID);
+  if(eventObj.status === 'not approved'){
+    loader.dismiss();
+    const alert = await this.alertController.create({header: 'Already Not Approved', buttons: ['Ok']});
+    return alert.present();
+  }
+  try{
+    await this.crud.updateDocument('events',eventDocID, {status: 'not approved'});
+    await loader.dismiss();
+    await this.ngOnInit();
+  }catch(err){
+    loader.dismiss();
+    console.log(err);
+  }
+
+
+}
+
 
 
 
