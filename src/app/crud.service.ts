@@ -462,4 +462,43 @@ async getEventsByHallID(hallId: string): Promise<any[]> {
     }
   }
 
+  async getEventAttendees(eventName : any) : Promise<string[] | []>{
+    let eventId = await this.getDocumentIdByUniqueKey('events', 'name', eventName);
+    let attendees : any[] = [];
+    try {
+      const collectionRef = collection(this.firestore, 'registrations');
+      const q = query(collectionRef, where("event_id", "==", eventId));
+      const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach(
+        async (doc) => {
+          // get attendee name using the id
+          
+          let attendee = await this.getAttendeeNameById(doc.data()['attendee_id']);
+          attendees.push(attendee);
+        }
+      );
+      return attendees;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return [];
+    }
+  }
+
+  async getAttendeeNameById(attendeeId : any) : Promise<string | null>{
+    let attendeeName : any;
+    try {
+      const collectionRef = collection(this.firestore, 'users');
+      const querySnapshot = await getDoc(doc(this.firestore, 'users/' + attendeeId));
+
+      if(querySnapshot.exists()){
+        attendeeName = querySnapshot.data()['name'];
+      }
+      return attendeeName;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return null;
+    }
+  }
+
 }

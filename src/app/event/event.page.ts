@@ -14,6 +14,7 @@ export class EventPage implements OnInit {
   event : Event = {} as Event;
   speakers : any[] = [];
   floorPlan : any;
+  attendees : any[] = [];
 
   constructor(
     public activatedRoute: ActivatedRoute,
@@ -43,6 +44,7 @@ export class EventPage implements OnInit {
 
       await this.getEventSpeakers();
       await this.getEventFloorPlan();
+      await this.getEventAttendees();
 
       loading.dismiss();
     } catch(err){
@@ -73,6 +75,10 @@ export class EventPage implements OnInit {
 
   async getEventFloorPlan(){
     this.floorPlan = await this.crudService.getEventFloorPlan(this.event.hall_id);
+  }
+
+  async getEventAttendees(){
+    this.attendees = await this.crudService.getEventAttendees(this.event.name);
   }
 
   registerEvent(){

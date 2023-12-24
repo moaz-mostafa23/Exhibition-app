@@ -31,20 +31,17 @@
    {{this.event.agenda}}
    <br>
    
-   <h2>Speakers</h2>
+   <h3>Speakers</h3>
    <ion-text *ngFor="let name of this.speakers">{{name}}<br></ion-text> 
    <br>
    <br>
 
-   <h2>Exhibition/ Floor Plan</h2> <br>
+   <h3>Exhibition/ Floor Plan</h3>
    {{this.floorPlan}} <br>
    
+   <h3>Attendees</h3>
+   <ion-text *ngFor="let attendee of this.attendees">{{attendee}} <br></ion-text>
    <!--    
-  <h2>Registration</h2> <br>
-  {{this.event.registration}} <br>
-  
-  <h2>Attendees</h2> <br>
-  {{this.event.attendees}} <br>
   
   <h2>Updates</h2> <br>
   {{this.event.updates}} <br> -->
