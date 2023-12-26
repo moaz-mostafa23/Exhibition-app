@@ -27,9 +27,10 @@ export interface Update{
 
 export interface Message{
   sender_id: string;
-  receiver_id: string;
+  event_id: string;
   message: string;
   timestamp: string;
+  sender_name: string;
 }
 
 export interface Hall {
@@ -557,10 +558,12 @@ async getEventsByHallID(hallId: string): Promise<any[]> {
     }
   }
 
-  async sendMessage(senderId : any, receiverId : any, message : any){
+  async sendMessage(senderId : any, eventId : any, message : any){
     try{
+      // get sender name
+      let senderName = await this.getUsernameById(senderId);
       const collectionRef = collection(this.firestore, 'messages');
-      const docRef = await addDoc(collectionRef, {sender_id: senderId, receiver_id: receiverId, message: message, timestamp: new Date().toISOString()});
+      const docRef = await addDoc(collectionRef, {sender_id: senderId, event_id: eventId, message: message, timestamp: new Date().toDateString() + " - " + new Date().toTimeString(), sender_name: senderName});
       return true;
     }catch(error){
       console.log("Error sending message");
@@ -568,8 +571,8 @@ async getEventsByHallID(hallId: string): Promise<any[]> {
     }
   }
 
-  async getMessages(senderId : any, receiverId : any) : Promise<any>{ 
-    const q = query(collection(this.firestore, 'messages'), orderBy('timestamp', 'asc'),  where('sender_id', 'in', [senderId, receiverId]));
+  async getMessages(eventId : any) : Promise<any>{ 
+    const q = query(collection(this.firestore, 'messages'), orderBy('timestamp', 'asc'),  where('event_id', '==', eventId));
 
     this.messages$ = collectionData(q) as Observable<Message[]>;
 
@@ -598,6 +601,25 @@ async getEventsByHallID(hallId: string): Promise<any[]> {
     //   console.error("Error getting documents: ", error);
     //   return [];
     // }
+  }
+
+  async getUsernameById(userId : any) : Promise<string | null>{
+    let username : any;
+    try {
+      const collectionRef = collection(this.firestore, 'users');
+      const querySnapshot = await getDocs(query(collectionRef, where("uid", "==", userId)));
+
+      querySnapshot.forEach(
+        (doc)=>{
+          username = doc.data()['firstName'] + " " + doc.data()['lastName'];
+          return username;
+        }
+      );
+      return username;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return null;
+    }
   }
 
 

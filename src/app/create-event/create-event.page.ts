@@ -7,6 +7,7 @@ import { Storage } from '@ionic/storage-angular';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
+import { updateDoc } from 'firebase/firestore';
 
 
 
@@ -71,7 +72,8 @@ export class CreateEventPage implements OnInit {
       picture: [this.eventForm.controls['pic1'].value, this.eventForm.controls['pic2'].value],
       status: this.eventForm.controls['status'].value
     };
-    const eventDocRef = await this.crud.createDocument('events', {...newEvent, hall_name: this.eventForm.controls['hallName'].value});
+    const eventDocRef = await this.crud.createDocument('events', {...newEvent, hall_name: this.eventForm.controls['hallName'].value, event_id: '',});
+    await updateDoc(eventDocRef, {event_id: eventDocRef.id});
   
     // Create a new speaker
     const newSpeaker = {

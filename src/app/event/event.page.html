@@ -3,17 +3,11 @@
     <ion-buttons>
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>{{this.eventName}}</ion-title>
+    <ion-title size="large">{{this.eventName}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">{{this.eventName}}</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
+<ion-content [fullscreen]="true" style="margin: 0;">
   <ion-refresher slot="fixed" (ionRefresh)="refreshViewEventPage($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
@@ -40,7 +34,8 @@
    <br>
 
    <h3>Exhibition/ Floor Plan</h3>
-   {{this.floorPlan}} <br>
+   <br>
+   <img src="{{this.floorPlan}}" alt="">
    
    <h3>Attendees</h3>
    <ion-text *ngFor="let attendee of this.attendees; let i = index;">{{i+1}}. {{attendee}} <br></ion-text>
@@ -59,6 +54,7 @@
 
    </div>
 </ion-content>
+<br><br><br><br><br><br><br><br><br><br><br>
 <ion-footer>
   <ion-button color="success" expand="full" size="large" (click)="registerEvent()">REGISTER</ion-button>
 </ion-footer>
