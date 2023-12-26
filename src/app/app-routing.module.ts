@@ -58,7 +58,7 @@ const routes: Routes = [
     loadChildren: () => import('./foresee/foresee.module').then( m => m.ForeseePageModule)
   },
   {
-    path: 'chat/:receiverId',
+    path: 'chat/:eventId',
     loadChildren: () => import('./chat/chat.module').then( m => m.ChatPageModule)
   }
 

@@ -76,7 +76,7 @@
             <ion-card-subtitle>Status: <ion-button  size="small" [color]="event.status === 'pending' ? 'warning' : (event.status === 'approved' ? 'success' : (event.status === 'not approved' ? 'danger' : 'danger'))">{{event.status}}</ion-button></ion-card-subtitle>
             <ion-fab style="position: absolute; right: 0;">
               <ion-fab-button size="small" color="success">
-                <ion-icon name="chatbubble" routerLink="/chat/{{event.client_id}}" routerDirection="forward"></ion-icon>
+                <ion-icon name="chatbubble" routerLink="/chat/{{event.event_id}}" routerDirection="forward"></ion-icon>
               </ion-fab-button>
             </ion-fab>
           </ion-card-header>
@@ -97,13 +97,13 @@
             <ion-label>Pending Events</ion-label>
             <ion-reorder></ion-reorder>
           </ion-item>
-          <ion-card slot="content" *ngFor="let penEvent of pendingEvents">
+          <ion-card slot="content" *ngFor="let penEvent of pendingEvents;">
             <ion-card-header>
               <ion-card-title>{{penEvent.name}}</ion-card-title>
               <ion-card-subtitle>Status: <ion-button size="small" color="warning">Pending</ion-button></ion-card-subtitle>
               <ion-fab style="position: absolute; right: 0;">
                 <ion-fab-button size="small" color="success">
-                  <ion-icon name="chatbubble" routerLink="/chat/{{penEvent.client_id}}" routerDirection="forward"></ion-icon>
+                  <ion-icon name="chatbubble" routerLink="/chat/{{penEvent.event_id}}" routerDirection="forward"></ion-icon>
                 </ion-fab-button>
               </ion-fab>
             </ion-card-header>
@@ -133,7 +133,7 @@
               <ion-card-subtitle>Status: <ion-button size="small" color="success">Approved</ion-button></ion-card-subtitle>
               <ion-fab style="position: absolute; right: 0;">
                 <ion-fab-button size="small" color="success">
-                  <ion-icon name="chatbubble" routerLink="/chat/{{approEvent.client_id}}" routerDirection="forward"></ion-icon>
+                  <ion-icon name="chatbubble" routerLink="/chat/{{approEvent.event_id}}" routerDirection="forward"></ion-icon>
                 </ion-fab-button>
               </ion-fab>
             </ion-card-header>
@@ -163,7 +163,7 @@
               <ion-card-subtitle>Status: <ion-button size="small" color="danger">Not Approved</ion-button></ion-card-subtitle>
               <ion-fab style="position: absolute; right: 0;">
                 <ion-fab-button size="small" color="success">
-                  <ion-icon name="chatbubble" routerLink="/chat/{{notEvent.client_id}}" routerDirection="forward"></ion-icon>
+                  <ion-icon name="chatbubble" routerLink="/chat/{{notEvent.event_id}}" routerDirection="forward"></ion-icon>
                 </ion-fab-button>
               </ion-fab>
             </ion-card-header>

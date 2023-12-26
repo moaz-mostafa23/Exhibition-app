@@ -1,5 +1,8 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
+    <ion-buttons>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
     <ion-title>chat</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -8,13 +11,15 @@
   .messages {
   display: flex;
   flex-direction: column;
-  padding: 8px;
-  border-radius: 50%;
-  margin-bottom: 8px;
+
+  /* max-width: 50%; */
+  margin-bottom: 10px;
+  padding-right: 5px;
+  
 }
 
 .message-text {
-  padding: 10px 15px;
+  padding: 5px 10px;
   border-radius: 20px;
   margin-bottom: 8px;
   max-width: 80%;
@@ -25,12 +30,35 @@
   align-self: flex-end;
   background-color: #4CAF50; /* Green background for my messages */
   color: white;
+  
+  border-top-left-radius: 5%;
+  border-top-right-radius: 5%;
+  border-bottom-left-radius: 5%;
 }
 
 .other-message {
   align-self: flex-start;
   background-color: #e0e0e0; /* Light grey background for other messages */
   color: black;
+
+  border-top-left-radius: 5%;
+  border-top-right-radius: 5%;
+  border-bottom-right-radius: 5%;
+}
+
+.msg-time {
+  font-size: 10px;
+  color: #000000;
+  margin-bottom: 8px;
+  max-width: 80%;
+  padding-left: 15px;
+}
+
+.sender-name{
+  padding-left: 15px;
+  font-size: 15px;
+  color: #000000;
+  margin-bottom: 8px;
 }
 
 </style>
@@ -38,15 +66,21 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
+      <ion-buttons>
+        <ion-back-button></ion-back-button>
+      </ion-buttons>
       <ion-title size="large">chat</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div class="messages">
+  <div class="messages" style="margin-bottom: 5%;">
     <div *ngFor="let msg of this.messages$ | async" [class]="(msg.sender_id === this.currentUserId) ? 'my-message' : 'other-message'">
+      <div class="sender-name">{{msg.sender_name}}</div>
       <div class="message-text">{{ msg.message }}</div>
-      <br>
-      {{msg.timestamp}}
+      
+      <div class="msg-time">
+        {{msg.timestamp.substring(0, 10) + ' ' + msg.timestamp.substring(11, 16) + ' ' + msg.timestamp.substring(17, 35)}}
+      </div>
     </div>
   </div>
 
