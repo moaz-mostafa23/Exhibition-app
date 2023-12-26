@@ -66,7 +66,7 @@ export class UpdateEventPage implements OnInit {
 
 
   isValid(){
-    if(this.name && this.agenda && this.update_header && this.update_text && this.speaker_name && this.pic1 && this.pic2){
+    if(this.name && this.agenda && this.speaker_name && this.pic1 && this.start_date && this.end_date){
       return true
     }else{
       return false;

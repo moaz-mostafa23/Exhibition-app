@@ -31,12 +31,12 @@ export class CreateEventPage implements OnInit {
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       pic1: ['', Validators.required],
-      pic2: ['', Validators.required],
+      pic2: [''],
       status: ['pending'],
-      updateHeader: ['', Validators.required],
+      updateHeader: [''],
       speakerName: ['', Validators.required],
       hallName: ['', Validators.required],
-      updates: ['', Validators.required]
+      updates: ['']
     });
   
     
@@ -112,5 +112,28 @@ export class CreateEventPage implements OnInit {
 
 
   }
+
+
+  doReorder(ev: any) {
+    // Get the keys of the controls as an array
+    let controlKeys = Object.keys(this.eventForm.controls);
+    
+    // Reorder the array
+    controlKeys.splice(ev.detail.to, 0, controlKeys.splice(ev.detail.from, 1)[0]);
+    
+    // Create a new object with the keys in the new order
+    let reorderedControls:any = {};
+    for (let key of controlKeys) {
+      reorderedControls[key] = this.eventForm.controls[key];
+    }
+    
+    // Replace the controls in the form group
+    this.eventForm.controls = reorderedControls;
+    
+    // Complete the reorder operation
+    ev.detail.complete();
+  }
+  
+  
 
 }
