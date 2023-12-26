@@ -40,7 +40,9 @@ export class Tab2Page implements OnInit, OnDestroy {
     this.notApprovedEvents = this.AllEvents.filter((ev:any)=> {return ev.status === 'not approved'});
     this.user = await this.authService.getUserData();
     this.userID= await this.crud.getDocumentIdByUniqueKey('users','email',this.user.email);
-    this.registeredEventsID = (await this.crud.getRegisterationByAttendeeId(this.userID)).map((res:any)=> res.event_id);
+
+    const useruid = this.user?.uid;
+    this.registeredEventsID = (await this.crud.getRegisterationByAttendeeId(useruid)).map((res:any)=> res.event_id);
     this.registeredEventsObj = await this.crud.getEventsByIds(this.registeredEventsID);
     if(this.user.userType === 'client'){
     this.createdEvents = await this.crud.getEventsByClientId(this.userID);
@@ -82,7 +84,8 @@ async deleteRegisteredEvent(name:string) {
 
           // Assuming you have a deleteRegisteredEvent function in your CrudService
           const eventID:any= await this.crud.getDocumentIdByUniqueKey('events','name',name);
-          await this.crud.deleteRegisteration(eventID, this.userID);
+          const useruid = this.user?.uid;
+          await this.crud.deleteRegisteration(eventID, useruid);
 
           await loading.dismiss();
           console.log('Event deleted successfully');
@@ -244,6 +247,15 @@ async disproveEvent(eventName:any){
   }
 
 
+}
+
+async refreshViewEventPage(event : any){
+  await this.ngOnInit();
+
+  setTimeout(() => {
+    // Any calls to load data go here
+    event.target.complete();
+  }, 1000);
 }
 
 
