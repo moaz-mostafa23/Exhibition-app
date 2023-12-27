@@ -140,6 +140,25 @@ export class CrudService {
       console.error("Error getting document: ", error);
     }
   }
+  // get a user by uid
+  async getUserByUid(uid: string): Promise<any> {
+    try {
+      const usersRef = collection(this.firestore, 'users');
+      const q = query(usersRef, where('uid', '==', uid));
+      const snapshot = await getDocs(q);
+  
+      if (snapshot.docs.length === 0) {
+        return null; // User not found
+      }
+  
+      const doc = snapshot.docs[0];
+      const userData = doc.data();
+      return userData;
+    } catch (error) {
+      console.error('Error getting user by uid:', error);
+      return null;
+    }
+  }
 
 
   // Update a document by its ID
@@ -381,6 +400,7 @@ export class CrudService {
     return 'Not reserved';
   }
   
+
   getAllDocumentsByCollectionUsingPromise(collectionName: string): Promise<DocumentData[]> {
     return new Promise<DocumentData[]>((resolve, reject) => {
       getDocs(collection(this.firestore, collectionName))
@@ -394,6 +414,7 @@ export class CrudService {
         });
     });
   }
+
 
   async getAttendeeHomeEvents() : Promise<Event[]>{
     let events : Event[] = [];
