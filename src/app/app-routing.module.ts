@@ -60,7 +60,12 @@ const routes: Routes = [
   {
     path: 'chat/:eventId',
     loadChildren: () => import('./chat/chat.module').then( m => m.ChatPageModule)
+  },
+  {
+    path: 'view-event-client/:name',
+    loadChildren: () => import('./view-event-client/view-event-client.module').then( m => m.ViewEventClientPageModule)
   }
+
 
 
 

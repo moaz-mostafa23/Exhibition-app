@@ -4,7 +4,6 @@ import { CrudService } from '../crud.service';
 import { Event } from '../crud.service';
 import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { AuthService } from '../auth.service';
-import { Tab1Page } from '../tab1/tab1.page';
 @Component({
   selector: 'app-event',
   templateUrl: './event.page.html',
