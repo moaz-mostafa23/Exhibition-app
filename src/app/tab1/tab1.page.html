@@ -75,8 +75,41 @@
     <ion-searchbar (ionInput)="searchHalls($event)"></ion-searchbar>
     <!-- attendee.user@email.com, pass: admin123 -->
     <ion-list>
+      <ion-datetime displayFormat="MMMM D, YYYY h:mm A" pickerFormat="MMMM D, YYYY h:mm A" [(ngModel)]="selectedDate" placeholder="Select Date"></ion-datetime>
+      <ion-icon style="margin-left: 10px;" size="large" name="filter" (click)="presentActionSheet()"></ion-icon>
+      <br>
+      <ion-item>
+<ion-select label="Sort By Capacity: " [(ngModel)]="sortOption" (ionChange)="sortChange()">
+  <ion-select-option value="none">None</ion-select-option>
+  <ion-select-option value="asc">Ascending</ion-select-option>
+  <ion-select-option value="desc">Descending</ion-select-option>
+</ion-select>
+</ion-item>
+<ion-item>
+
+<ion-range label="Min Cap:" min="0" max="3000" [pin]="true" [(ngModel)]="minCapacity" (ionChange)="filterByCapacity()">
+  <ion-icon slot="start" size="small" name="people-outline"></ion-icon>
+  <ion-icon slot="end" name="people"></ion-icon>
+  <ion-label slot="start">0</ion-label>
+  <ion-label slot="end">3000</ion-label>
+</ion-range>
+</ion-item>
+<ion-item>
+
+<ion-range label="Max Cap:" min="0" max="3000" [pin]="true" [(ngModel)]="maxCapacity" (ionChange)="filterByCapacity()">
+  <ion-icon slot="start" size="small" name="people-outline"></ion-icon>
+  <ion-icon slot="end" name="people"></ion-icon>
+  <ion-label slot="start">0</ion-label>
+  <ion-label slot="end">3000</ion-label>
+</ion-range>
+
+</ion-item>
+
+
+
+
       <ion-card 
-      *ngFor="let hall of this.hallsCopy"
+      *ngFor="let hall of hallsCopy"
       >
         <!-- <img src="{{hall.picture[0]}}" alt="Event Picture"> -->
         <img [src]="hall.floor_plan" alt="Hall Picture" style="width: 100%; height: auto;">
@@ -120,6 +153,8 @@
     <ion-searchbar (ionInput)="searchHalls($event)"></ion-searchbar>
     <!-- attendee.user@email.com, pass: admin123 -->
     <ion-list>
+      
+
           <ion-card 
           *ngFor="let hall of this.hallsCopy"
           >

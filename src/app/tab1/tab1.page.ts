@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AlertController, LoadingController, NavController, ModalController } from '@ionic/angular';
+import { AlertController, LoadingController, NavController, ModalController, ActionSheetController } from '@ionic/angular';
 import { User } from '../auth.service';
 import { Auth, getAuth } from '@angular/fire/auth';
 import { AuthService } from '../auth.service';
@@ -10,6 +10,7 @@ import { HallModalPage } from '../hall-modal/hall-modal.page';
 import { firstValueFrom } from 'rxjs';
 import { HallEditModalPage } from '../hall-edit-modal/hall-edit-modal.page';
 import { ForeseePage } from '../foresee/foresee.page';
+
 
 @Component({
   selector: 'app-tab1',
@@ -28,6 +29,12 @@ export class Tab1Page implements OnInit, OnDestroy {
 
   halls: Hall[] = {} as Hall[];
   hallsCopy: Hall[] = {} as Hall[];
+  selectedDate= new Date();
+  sortOption: 'none' | 'asc' | 'desc' = 'none';
+  minCapacity: number = 0;
+  maxCapacity: number = 3000; // Set this to the maximum capacity of your halls
+
+
 
 
 
@@ -40,6 +47,7 @@ export class Tab1Page implements OnInit, OnDestroy {
     public utilityService: UtilityService,
     public navController: NavController,
     private modalController: ModalController,
+    private actionSheet: ActionSheetController
   ) {
 
 
@@ -69,10 +77,13 @@ export class Tab1Page implements OnInit, OnDestroy {
           else if (this.userType == 'attendee')
             await this.getEvents();
 
+            await this.filterHalls('all');
+
         } else {
           loading.dismiss();
           this.navCtrl.navigateForward('/login');
         }
+        
       } catch (err) {
         loading.dismiss();
         console.log(err);
@@ -265,4 +276,114 @@ export class Tab1Page implements OnInit, OnDestroy {
 
 
   }
+
+
+  async presentActionSheet(){
+    const action = await this.actionSheet.create({
+      header: 'Filter',
+      buttons: [{
+        text: 'Reserved',
+        handler: async () => {
+          const loading = await this.loadingController.create({
+            message: 'Please wait...',
+          });
+          await loading.present();
+          await this.filterHalls('reserved');
+          await loading.dismiss();
+        }
+      }, {
+        text: 'Available',
+        handler: async () => {
+          const loading = await this.loadingController.create({
+            message: 'Please wait...',
+          });
+          await loading.present();
+          await this.filterHalls('available');
+          await loading.dismiss();
+        }
+      }, {
+        text: 'All',
+        handler: async () => {
+          const loading = await this.loadingController.create({
+            message: 'Please wait...',
+          });
+          await loading.present();
+          await this.filterHalls('all');
+          await loading.dismiss();
+        }
+      }]
+    });
+  
+    await action.present();
+  }
+  
+
+  async filterHalls(option: any) {
+
+    let hallsPromises = this.halls.map(async (hall: any) => {
+      let events = await this.crudService.getEventsByHallID(hall.id);
+      let isReserved = events.some((event: any) =>
+        event.status === 'approved' &&
+        this.isDateInRange(this.selectedDate, event.start_date.toDate(), event.end_date.toDate())
+      );
+  
+      if (option === 'reserved' && isReserved) {
+        return hall;
+      } else if (option === 'available' && !isReserved) {
+        return hall;
+      } else if (option === 'all') {
+        return hall;
+      }
+    });
+  
+    this.hallsCopy = (await Promise.all(hallsPromises)).filter(hall => hall !== undefined);
+    
+  }
+  
+
+  isDateInRange(date:Date, startDate:Date, endDate:Date) {
+    let d = new Date(date);
+    let start = new Date(startDate);
+    let end = new Date(endDate);
+  
+    // Set the time on the dates to be the same, so we're only comparing the date part
+    d.setHours(0, 0, 0, 0);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+  
+    return d >= start && d <= end;
+  }
+
+  sortByCapacity(order: 'asc' | 'desc') {
+    this.hallsCopy.sort((a:any, b:any) => {
+      if (order === 'asc') {
+        return a.capacity - b.capacity;
+      } else {
+        return b.capacity - a.capacity;
+      }
+    });
+  }
+  sortChange() {
+    if (this.sortOption === 'asc') {
+      this.sortByCapacity('asc');
+    } else if (this.sortOption === 'desc') {
+      this.sortByCapacity('desc');
+    } else {
+      this.resetSort();
+    }
+  }
+  
+  
+
+  resetSort() {
+    this.hallsCopy = [...this.halls];
+  }
+
+  filterByCapacity() {
+    this.hallsCopy = this.halls.filter((hall:any) => hall.capacity >= this.minCapacity && hall.capacity <= this.maxCapacity);
+  }
+  
+  
+
+
 }
