@@ -4,6 +4,7 @@ import { CrudService } from '../crud.service';
 import { Event } from '../crud.service';
 import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { AuthService } from '../auth.service';
+import { Tab1Page } from '../tab1/tab1.page';
 @Component({
   selector: 'app-event',
   templateUrl: './event.page.html',
@@ -17,6 +18,7 @@ export class EventPage implements OnInit {
   floorPlan : any;
   attendees : any[] = [];
   updates : any[] = [];
+  userType : string = '';
 
   constructor(
     public activatedRoute: ActivatedRoute,
@@ -25,9 +27,14 @@ export class EventPage implements OnInit {
     public alertController : AlertController,
     public authService : AuthService,
     public navController : NavController,
-  ) { }
+  ) {
 
-  ngOnInit() {
+   }
+
+  async ngOnInit() {
+    this.authService.getUserData().then((user) => {
+      this.userType = user.type;
+    });
     this.eventName = this.activatedRoute.snapshot.paramMap.get('name') ?? '';
     this.getEventDetails();
   }
