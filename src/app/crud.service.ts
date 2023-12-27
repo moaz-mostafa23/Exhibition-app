@@ -76,6 +76,25 @@ export class CrudService {
       console.error("Error getting document: ", error);
     }
   }
+  // get a user by uid
+  async getUserByUid(uid: string): Promise<any> {
+    try {
+      const usersRef = collection(this.firestore, 'users');
+      const q = query(usersRef, where('uid', '==', uid));
+      const snapshot = await getDocs(q);
+  
+      if (snapshot.docs.length === 0) {
+        return null; // User not found
+      }
+  
+      const doc = snapshot.docs[0];
+      const userData = doc.data();
+      return userData;
+    } catch (error) {
+      console.error('Error getting user by uid:', error);
+      return null;
+    }
+  }
 
   // Update a document by its ID
   async updateDocument(collectionName: string, documentId: string, data: any): Promise<void> {
@@ -264,6 +283,7 @@ export class CrudService {
       return [];
     }
   }
+  
   
   
   

@@ -90,6 +90,7 @@ async editAdmin(user: any) {
  
            // Display alert2
            await alert2.present();
+          //  await this.navCtrl.navigateForward('/tabs/tab3');
          }
        }
      ]
@@ -97,6 +98,7 @@ async editAdmin(user: any) {
  
    // show verification message
    await alert1.present();
+   
 
   } catch (error) {
     console.error('Error updating admin:', error);
@@ -144,6 +146,7 @@ async deleteAdmin(user: any) {
 
           // Display alert2
           await alert2.present();
+          // this.navCtrl.navigateForward('/tabs/tab3');
         }
       }
     ]

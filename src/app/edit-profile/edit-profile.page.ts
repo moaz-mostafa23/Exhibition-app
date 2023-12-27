@@ -33,7 +33,7 @@ export class EditProfilePage implements OnInit {
           loading.dismiss();
         }else{
           loading.dismiss();
-          this.navCtrl.navigateForward('/login');
+         await this.navCtrl.navigateForward('/login');
         }
       }catch(err){
         loading.dismiss();
@@ -50,13 +50,18 @@ export class EditProfilePage implements OnInit {
     try{
       await this.authService.updateProfile(this.user);
       await loading.dismiss();
+      await this.navCtrl.navigateForward('/tabs');
     }catch(err){
       loading.dismiss();
       console.log(err);
     }
   }
-  ngOnDestroy(): void {
-    // Unsubscribe from the userLoggedIn observable to avoid memory leaks
-    this.authService.userLoggedIn.unsubscribe();
+ async back(){
+    await this.navCtrl.navigateForward('/tabs/tab3');
   }
+  
+  // ngOnDestroy(): void {
+  //   // Unsubscribe from the userLoggedIn observable to avoid memory leaks
+  //   this.authService.userLoggedIn.unsubscribe();
+  // }
 }

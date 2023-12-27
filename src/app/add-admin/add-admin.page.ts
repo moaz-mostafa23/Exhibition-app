@@ -63,6 +63,9 @@ async ngOnInit() {
     console.error('Error fetching users:', error);
   }
 }
+async back(){ 
+   await this.navCtrl.navigateForward('/tabs/tab3');
+} 
 
 
 // async addAdmin(user: any) {
@@ -139,9 +142,10 @@ if (this.myForm.invalid) {
   return;
 }
 
-const loader = await this.load.create({ message: 'Signing up...' });
+const loader = await this.load.create({ message: 'Adding Admin...' });
 try {
   loader.present();
+  console.log(this.myForm.controls['password'].value);
 
   // Extract only relevant values from the form
   const registeredUser: User = {
@@ -153,9 +157,9 @@ try {
     userType: "admin"
   };
 
-  await this.auth.signUp(registeredUser);
+  await this.auth.adminSignUp(registeredUser);
   await loader.dismiss();
-  this.navCtrl.navigateForward('/tabs');
+  await this.navCtrl.navigateForward('/tabs');
 } catch (err) {
   await loader.dismiss();
   console.log(err);

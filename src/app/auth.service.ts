@@ -32,8 +32,10 @@ userLoggedIn = new BehaviorSubject<boolean>(false);
          throw new Error('Email already in use');
 
       }
+      console.log(user.password);
 
       const credential = await createUserWithEmailAndPassword(this.auth, user.email,user.password);
+      
 
       // Add user data to users collection
       await this.addUserToFirestore(credential.user, user);
@@ -42,6 +44,66 @@ userLoggedIn = new BehaviorSubject<boolean>(false);
       throw error;
     }
   }
+
+ async adminSignUp(user: User): Promise<void> {
+  try {
+    const user1 =  this.auth.currentUser;
+    
+    const existingUsers = await this.getExistingUsersByEmail(user.email);
+
+   
+    if (existingUsers.length > 0) {
+      const alertBox = await this.alert.create({
+        header: "Email Already Taken",
+        message: "Email has been taken by another user. Use another email",
+        buttons: ['Cancel']
+      });
+      
+      alertBox.present();
+      throw new Error('Email already in use');
+    }
+    // curent user data
+     
+    if(user1){
+    let userData = await this.getUserByUid(user1.uid);
+    console.log(userData);
+    
+    const email = userData.email;
+    // get current user password
+    const userInfo = await this.crud.getUserByUid( userData.uid); 
+    console.log(userInfo);
+    const password = userInfo.password;
+    console.log(password);
+    // Create user with email and password
+    await this.signUp(user);
+
+    // Sign out current user
+    await this.auth.signOut();
+    // Sign in the first user
+    try
+    {
+
+      await this.login(email, password);
+    }
+    catch(err)
+    {
+      console.log(err);
+    }
+    
+    }
+
+   
+
+    
+   
+    // Sign in the first user
+    // await this.login(user1.email, user1.password);
+  } catch (error) {
+    console.log("Error signing up: ", error);
+    throw error;
+  }
+}
+
   // User login
   async login(email: string, password: string): Promise<UserCredential> {
     try {
@@ -91,7 +153,7 @@ userLoggedIn = new BehaviorSubject<boolean>(false);
   
     const usersRef = collection(this.firestore, 'users');
     await addDoc(usersRef, {
-      ...userData,
+      ...userData, password,
       uid: user.uid,
     });
   }
