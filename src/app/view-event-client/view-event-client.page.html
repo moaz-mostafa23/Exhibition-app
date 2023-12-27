@@ -1,0 +1,61 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons>
+      <!-- <ion-button (click)="backToTaps()" fill="Clear">
+        <ion-icon name="back"></ion-icon>
+        BACK</ion-button> -->
+    </ion-buttons>
+    <ion-title size="large">{{this.eventName}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" style="margin: 0;">
+  <ion-refresher slot="fixed" (ionRefresh)="refreshViewEventPage($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <img src="{{this.event.picture[0]}}" alt="">
+  <div class="ion-padding">
+
+    <br>
+    
+    <!-- 
+      Event Agenda
+    Speakers
+    Exhibition/ Floor Plan
+    Registration (for attendees)
+    Attendees
+    Updates
+  -->
+  <h3>Agenda</h3>
+   {{this.event.agenda}}
+   <br>
+   
+   <h3>Speakers</h3>
+   <ion-text *ngFor="let name of this.speakers; let i = index;">{{i+1}}. {{name}}<br></ion-text> 
+   <br>
+
+   <h3>Exhibition/ Floor Plan</h3>
+   <br>
+   <img src="{{this.floorPlan}}" alt="">
+   
+   <h3>Attendees</h3>
+   <ion-text *ngFor="let attendee of this.attendees; let i = index;">{{i+1}}. {{attendee}} <br></ion-text>
+   
+
+   <h3>Updates</h3>
+   <ion-card *ngFor="let update of this.updates; let i = index;">
+      <ion-card-header>
+        <ion-card-title>{{update.update_header}}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        {{update.text}}
+      </ion-card-content>  
+  </ion-card> 
+   <br>
+
+   <ion-button (click)="backToTaps()" expand="full">
+    <ion-icon name="back" ></ion-icon>
+    BACK to home</ion-button>
+   </div>
+</ion-content>
