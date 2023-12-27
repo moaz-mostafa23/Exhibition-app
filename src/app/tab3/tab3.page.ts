@@ -9,7 +9,7 @@ import { AlertController, LoadingController, NavController } from '@ionic/angula
 })
 export class Tab3Page implements OnInit, OnDestroy {
 
-  user:any;
+  user:any = {};
 
   constructor(private authService: AuthService, private loading:LoadingController, private navCtrl:NavController, private alertCtrl: AlertController) {}
 

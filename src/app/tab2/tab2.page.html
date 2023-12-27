@@ -1,10 +1,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title  *ngIf="user">
-      {{ user.userType === 'attendee' ? 'Registered Events' : (user.userType === 'admin' ? 'Admin' : (user.userType === 'client' ? 'Created Events' : '')) }}
+      {{ user.userType === 'attendee' ? 'Registered Events' : (user.userType === 'admin' ? 'Events' : (user.userType === 'client' ? 'Created Events' : '')) }}
     </ion-title>
     <ion-buttons *ngIf="user && user.userType === 'client'" slot="end">
-      <ion-button>
+      <ion-button (click)="customEvent()">
         Add Event
       </ion-button>
    
@@ -16,32 +16,40 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large" *ngIf="user">{{ user.userType === 'attendee' ? 'Registered Events' : (user.userType === 'admin' ? 'Admin' : (user.userType === 'client' ? 'Created Events' : '')) }}</ion-title>
+      <ion-title size="large" *ngIf="user">{{ user.userType === 'attendee' ? 'Registered Events' : (user.userType === 'admin' ? 'Events' : (user.userType === 'client' ? 'Created Events' : '')) }}</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <ion-refresher slot="fixed" (ionRefresh)="refreshViewEventPage($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 
 
 
   <ion-accordion-group *ngIf="registeredEventsObj && user.userType === 'attendee'">
-    <ion-accordion *ngFor="let event of registeredEventsObj; let i=index">
-      <ion-item slot="header" color="light">
-        <ion-label>{{event.name}}</ion-label>
-      </ion-item>
-      <ion-card slot="content">
-        <ion-card-header>
-          <ion-card-title>{{event.name}}</ion-card-title>
-          <ion-card-subtitle>Status: <ion-button  size="small" [color]="event.status === 'pending' ? 'warning' : (event.status === 'approved' ? 'success' : (event.status === 'not approved' ? 'danger' : 'danger'))">{{event.status}}</ion-button></ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-img [src]="event.picture[0]"></ion-img>
-          <ion-button size="small" (click)="deleteRegisteredEvent(event.name)" color="danger">Cancel</ion-button>
-        </ion-card-content>
-      </ion-card>
-    </ion-accordion>
+    <ion-reorder-group (ionItemReorder)="doReorderAttendee($event)" disabled="false">
+      <ion-accordion *ngFor="let event of registeredEventsObj; let i=index">
+        <ion-item slot="header" color="light">
+          <ion-label>{{event.name}}</ion-label>
+          <ion-reorder slot="end"></ion-reorder>
+        </ion-item>
+        <ion-card slot="content">
+          <ion-card-header>
+            <ion-card-title>{{event.name}}</ion-card-title>
+            <ion-card-subtitle>Status: <ion-button  size="small" [color]="event.status === 'pending' ? 'warning' : (event.status === 'approved' ? 'success' : (event.status === 'not approved' ? 'danger' : 'danger'))">{{event.status}}</ion-button></ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-img [src]="event.picture[0]"></ion-img>
+            <ion-button size="small" (click)="deleteRegisteredEvent(event.name)" color="danger">Cancel</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-accordion>
+    </ion-reorder-group>
   </ion-accordion-group>
+  
 
 
-  <ion-accordion-group *ngIf="createdEvents && user.userType === 'client'">
+  <!-- <ion-accordion-group *ngIf="createdEvents && user.userType === 'client'">
     <ion-accordion *ngFor="let event of createdEvents; let i=index">
       <ion-item slot="header" color="light">
         <ion-label>{{event.name}}</ion-label>
@@ -53,10 +61,136 @@
         </ion-card-header>
         <ion-card-content>
           <ion-img [src]="event.picture[0]"></ion-img>
+          <ion-button size="small" (click)="deleteEvent(event.name)" color="danger">Delete</ion-button>
         </ion-card-content>
       </ion-card>
     </ion-accordion>
-  </ion-accordion-group>
+  </ion-accordion-group> -->
+  
+    <ion-accordion-group *ngIf="createdEvents && user.userType === 'client'">
+      <ion-reorder-group (ionItemReorder)="doReorderClient($event)" disabled="false">
+      <ion-accordion *ngFor="let event of createdEvents; let i=index">
+        <ion-item slot="header" color="light">
+          <ion-label>{{event.name}}</ion-label>
+          <ion-reorder></ion-reorder>
+        </ion-item>
+        <ion-card slot="content">
+          <ion-card-header>
+            <ion-card-title>{{event.name}}</ion-card-title>
+            <ion-card-subtitle>Status: <ion-button  size="small" [color]="event.status === 'pending' ? 'warning' : (event.status === 'approved' ? 'success' : (event.status === 'not approved' ? 'danger' : 'danger'))">{{event.status}}</ion-button></ion-card-subtitle>
+            <ion-fab style="position: absolute; right: 0;">
+              <ion-fab-button size="small" color="success">
+                <ion-icon name="chatbubble" routerLink="/chat/{{event.event_id}}" routerDirection="forward"></ion-icon>
+              </ion-fab-button>
+            </ion-fab>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-img [src]="event.picture[0]"></ion-img>
+            <ion-button size="small" (click)="deleteEvent(event.name)" color="danger">Delete</ion-button>
+            <ion-button color="success" size="small" (click)="updateEvent(event.name)" >Update Event</ion-button>
+            <ion-button color="primary" size="small" routerLink="/event/{{event.name}}" routerDirection="forward">View Event</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-accordion>
+    </ion-reorder-group>
+    </ion-accordion-group>
+
+    <ion-accordion-group *ngIf="AllEvents && user.userType === 'admin'">
+      <ion-reorder-group (ionItemReorder)="doReorderAdmin($event)" disabled="false">
+        <ion-accordion>
+          <ion-item slot="header" color="light">
+            <ion-label>Pending Events</ion-label>
+            <ion-reorder></ion-reorder>
+          </ion-item>
+          <ion-card slot="content" *ngFor="let penEvent of pendingEvents;">
+            <ion-card-header>
+              <ion-card-title>{{penEvent.name}}</ion-card-title>
+              <ion-card-subtitle>Status: <ion-button size="small" color="warning">Pending</ion-button></ion-card-subtitle>
+              <ion-fab style="position: absolute; right: 0;">
+                <ion-fab-button size="small" color="success">
+                  <ion-icon name="chatbubble" routerLink="/chat/{{penEvent.event_id}}" routerDirection="forward"></ion-icon>
+                </ion-fab-button>
+              </ion-fab>
+            </ion-card-header>
+            <ion-card-content>
+              <div style="position: relative;">
+              <ion-img [src]="penEvent.picture[0]"></ion-img>
+              <ion-button size="small" color="success" (click)="approveEvent(penEvent.name)" >Approve</ion-button>
+              <ion-button size="small" color="danger" (click)="disproveEvent(penEvent.name)">Disapprove</ion-button>
+              <ion-button size="small" color="primary" (click)="updateEvent(penEvent.name)">Update</ion-button>
+              <ion-button size="small" color="danger" (click)="deleteEvent(penEvent.name)">Delete</ion-button>
+
+              </div>
+             
+              
+            </ion-card-content>
+          </ion-card>
+        </ion-accordion>
+    
+        <ion-accordion>
+          <ion-item slot="header" color="light">
+            <ion-label>Approved Events</ion-label>
+            <ion-reorder></ion-reorder>
+          </ion-item>
+          <ion-card slot="content" *ngFor="let approEvent of approvedEvents">
+            <ion-card-header>
+              <ion-card-title>{{approEvent.name}}</ion-card-title>
+              <ion-card-subtitle>Status: <ion-button size="small" color="success">Approved</ion-button></ion-card-subtitle>
+              <ion-fab style="position: absolute; right: 0;">
+                <ion-fab-button size="small" color="success">
+                  <ion-icon name="chatbubble" routerLink="/chat/{{approEvent.event_id}}" routerDirection="forward"></ion-icon>
+                </ion-fab-button>
+              </ion-fab>
+            </ion-card-header>
+            <ion-card-content>
+              <div style="position: relative;">
+                <ion-img [src]="approEvent.picture[0]"></ion-img>
+                <ion-button size="small" color="success" (click)="approveEvent(approEvent.name)" >Approve</ion-button>
+                <ion-button size="small" color="danger" (click)="disproveEvent(approEvent.name)">Disapprove</ion-button>
+                <ion-button size="small" color="primary" (click)="updateEvent(approEvent.name)">Update</ion-button>
+                <ion-button size="small" color="danger" (click)="deleteEvent(approEvent.name)">Delete</ion-button>
+                
+                 
+  
+                </div>
+            </ion-card-content>
+          </ion-card>
+        </ion-accordion>
+    
+        <ion-accordion>
+          <ion-item slot="header" color="light">
+            <ion-label>Not Approved Events</ion-label>
+            <ion-reorder></ion-reorder>
+          </ion-item>
+          <ion-card slot="content" *ngFor="let notEvent of notApprovedEvents">
+            <ion-card-header>
+              <ion-card-title>{{notEvent.name}}</ion-card-title>
+              <ion-card-subtitle>Status: <ion-button size="small" color="danger">Not Approved</ion-button></ion-card-subtitle>
+              <ion-fab style="position: absolute; right: 0;">
+                <ion-fab-button size="small" color="success">
+                  <ion-icon name="chatbubble" routerLink="/chat/{{notEvent.event_id}}" routerDirection="forward"></ion-icon>
+                </ion-fab-button>
+              </ion-fab>
+            </ion-card-header>
+            <ion-card-content>
+              <div style="position: relative;">
+                <ion-img [src]="notEvent.picture[0]"></ion-img>
+                <ion-button size="small" color="success" (click)="approveEvent(notEvent.name)" >Approve</ion-button>
+                <ion-button size="small" color="danger" (click)="disproveEvent(notEvent.name)">Disapprove</ion-button>
+                <ion-button size="small" color="primary" (click)="updateEvent(notEvent.name)">Update</ion-button>
+              <ion-button size="small" color="danger" (click)="deleteEvent(notEvent.name)">Delete</ion-button>
+                
+                  
+  
+                </div>
+            </ion-card-content>
+          </ion-card>
+        </ion-accordion>
+      </ion-reorder-group>
+    </ion-accordion-group>
+    
+  
+  
 
 
 </ion-content>

@@ -12,5 +12,53 @@
     <ion-toolbar>
       <ion-title size="large">{{this.hallName}}</ion-title>
     </ion-toolbar>
-  </ion-header>  
+  </ion-header> 
+  
+  <ion-card>
+    <img [alt]="hall" [src]="hall.floor_plan" style="width: 100%; height: auto;" />
+    <ion-card-header>
+      <ion-card-title>{{hall.name}}</ion-card-title>
+      <ion-card-subtitle>Capacity: {{hall.capacity}}</ion-card-subtitle>
+    </ion-card-header>
+  
+    <ion-card-content>
+      <p>Booth fitting:  {{hall.booth_fiting}}</p>
+      <p>Contact info:  {{hall.contact_info}}</p>
+      <!-- <ion-button (click)="deleteHall(hall.name)" color="primary" size="small" slot="start" color="danger">
+        <ion-icon name="trash"></ion-icon> Delete
+      </ion-button> -->
+    </ion-card-content>
+  </ion-card>
+  
+  <ion-item-group>
+    <ion-item-divider (click)="toggleTable()">
+      <ion-label>Reservation History</ion-label>
+      <ion-icon name="chevron-down" slot="end" *ngIf="!isTableShown()"></ion-icon>
+      <ion-icon name="chevron-up" slot="end" *ngIf="isTableShown()"></ion-icon>
+    </ion-item-divider>
+    <ion-item *ngIf="isTableShown()">
+      <ion-label>Filter by:</ion-label>
+      <ion-toggle [(ngModel)]="selectedOption" (ionChange)="loadReservationHistory()"></ion-toggle>
+      <span>{{ selectedOption === 'last7days' ? 'Last 7 days' : 'Last 30 days' }}</span>
+    </ion-item>
+    <ion-item *ngIf="isTableShown()">
+      <table>
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let event of events">
+            <td>{{ event.name }}</td>
+            <td>{{ event.start_date }}</td>
+            <td>{{ event.end_date }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </ion-item>
+  </ion-item-group>
+  
 </ion-content>

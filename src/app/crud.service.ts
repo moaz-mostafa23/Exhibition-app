@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Firestore, where } from '@angular/fire/firestore';
+import { Firestore } from '@angular/fire/firestore';
 import { collection, collectionData, doc, addDoc, getDoc, updateDoc, deleteDoc, getDocs, DocumentReference, QuerySnapshot } from '@angular/fire/firestore';
-import { DocumentData, query } from 'firebase/firestore';
-import { Observable, of } from 'rxjs';
+import { DocumentData, or, orderBy, query, where } from 'firebase/firestore';
+import { Observable, of, combineLatest, pipe, from, } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { UtilityService } from './utility.service';
+import { AuthService } from './auth.service';
 
 
 export interface Event {
-  agendas: string;
+  agenda: string;
   client_id: string;
   end_date: string;
   hall_id: string;
@@ -15,6 +18,19 @@ export interface Event {
   start_date: string;
   status: string;
   hall_name: void;
+}
+
+export interface Update{
+  update_header: string;
+  update_text: string;
+}
+
+export interface Message{
+  sender_id: string;
+  event_id: string;
+  message: string;
+  timestamp: string;
+  sender_name: string;
 }
 
 export interface Hall {
@@ -33,8 +49,9 @@ export class CrudService {
 
   public events$: Observable<DocumentData[]> = this.getDocuments('events');
 
+  public messages$: Observable<DocumentData[]> = undefined as any as Observable<DocumentData[]>;
 
-  constructor(private firestore: Firestore) { }
+  constructor(public firestore: Firestore, private utilityService : UtilityService,) { }
 
   async createDocument(collectionName: string, data: any): Promise<DocumentReference<DocumentData> | any> {
     try {
@@ -61,6 +78,53 @@ export class CrudService {
       return of([]);
     }
   }
+
+  // get a single document by query
+  async getDocumentByQuery(collectionName: string, field: string, value: any): Promise<DocumentData | null> {
+    try {
+      // Create a query to find the document based on the specified field and value
+      const q = query(collection(this.firestore, collectionName), where(field, '==', value));
+
+      // Execute the query
+      const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
+
+      // If there is a document matching the query, return its data
+      if (querySnapshot.docs.length > 0) {
+        const documentData = querySnapshot.docs[0].data() as DocumentData;
+        return documentData;
+      } else {
+        return null; // No document found with the specified query
+      }
+    } catch (error) {
+      console.error("Error getting document by query: ", error);
+      throw error;
+    }
+  }
+
+  // get all documents matching query
+  async getDocumentsByQuery(collectionName: string, field: string, value: any): Promise<DocumentData[]> {
+    try {
+      // Create a query to find the documents based on the specified field and value
+      const q = query(collection(this.firestore, collectionName), where(field, '==', value));
+
+      // Execute the query
+      const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
+
+      // Create an array to store the documents data
+      let documentsData: DocumentData[] = [];
+
+      // If there are documents matching the query, add their data to the array
+      querySnapshot.forEach((doc) => {
+        documentsData.push(doc.data() as DocumentData);
+      });
+
+      return documentsData;
+    } catch (error) {
+      console.error("Error getting documents by query: ", error);
+      throw error;
+    }
+  }
+
 
   // Get a specific document by its ID
   async getDocumentById(collectionName: string, documentId: string): Promise<DocumentData | any> {
@@ -95,6 +159,7 @@ export class CrudService {
       return null;
     }
   }
+
 
   // Update a document by its ID
   async updateDocument(collectionName: string, documentId: string, data: any): Promise<void> {
@@ -176,12 +241,28 @@ export class CrudService {
     }
   }
 
-  async getDocumentIdByUniqueKey(collectionName: string, uniqueKey:string ,value: string): Promise<string | null> {
+  async getEventDetails(eventName : string) : Promise<DocumentData>{
+    let myDoc : DocumentData = {} as Event;
+    try{
+      const collectionRef = collection(this.firestore, 'events');
+      const q = query(collectionRef, where("name", "==", eventName));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // console.log(doc.id, " => ", doc.data());
+        myDoc = doc.data();
+      });
+    }catch(err){
+      console.log(err);
+    }
+    return myDoc;
+  }
+
+  async getDocumentIdByUniqueKey(collectionName: string, uniqueKey: string, value: string): Promise<string | null> {
     try {
       const collectionRef = collection(this.firestore, collectionName);
       const q = query(collectionRef, where(uniqueKey, '==', value));
       const snapshot = await getDocs(q);
-  
+
       if (snapshot.docs.length > 0) {
         return snapshot.docs[0].id; // Get the ID of the first document matching the name
       } else {
@@ -197,18 +278,18 @@ export class CrudService {
     try {
       // Create a query to find the documents based on the attendee_id
       const q = query(collection(this.firestore, 'registrations'), where('attendee_id', '==', attendeeId));
-  
+
       // Execute the query
       const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
-  
+
       // Create an array to store the event data
       let events: DocumentData[] = [];
-  
+
       // Iterate through the results and add each event data to the array
       querySnapshot.forEach((doc) => {
         events.push(doc.data() as DocumentData);
       });
-  
+
       return events;
     } catch (error) {
       console.error("Error getting registered events by attendee ID: ", error);
@@ -220,18 +301,18 @@ export class CrudService {
     try {
       // Create an array to store the event data
       let events: DocumentData[] = [];
-  
+
       // Iterate through the array of event IDs
       for (const eventId of eventIds) {
         // Get the event data for each ID
         const eventData = await this.getDocumentById('events', eventId);
-  
+
         // If the event data exists, add it to the array
         if (eventData) {
           events.push(eventData);
         }
       }
-  
+
       return events;
     } catch (error) {
       console.error("Error getting events by IDs: ", error);
@@ -243,17 +324,17 @@ export class CrudService {
     try {
       // Create a query to find the document based on the eventId and attendeeId
       const q = query(collection(this.firestore, 'registrations'), where('event_id', '==', eventId), where('attendee_id', '==', attendeeId));
-  
+
       // Execute the query
       const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
-  
+
       // Iterate through the results and delete each document
       querySnapshot.forEach(async (doc) => {
         const documentRef: DocumentReference<DocumentData> = doc.ref;
-  
+
         // Use the deleteDoc function to delete the document
         await deleteDoc(documentRef);
-  
+
         console.log('Document deleted successfully');
       });
     } catch (error) {
@@ -265,30 +346,302 @@ export class CrudService {
     try {
       // Create a query to find the documents based on the client_id
       const q = query(collection(this.firestore, 'events'), where('client_id', '==', clientId));
-  
+
       // Execute the query
       const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
-  
+
       // Create an array to store the event data
       let events: DocumentData[] = [];
-  
+
       // Iterate through the results and add each event data to the array
       querySnapshot.forEach((doc) => {
         events.push(doc.data() as DocumentData);
       });
-  
+
       return events;
     } catch (error) {
       console.error("Error getting events by client ID: ", error);
       return [];
     }
   }
+
+  async isEventReserved(start_date: string, end_date: string, hallId: string): Promise<string> {
+    // Convert the start and end dates to JavaScript Date objects
+    const eventStartDate = new Date(start_date);
+    const eventEndDate = new Date(end_date);
   
+    // Check if the start date is later than the end date
+    if (eventStartDate > eventEndDate) {
+      // Start date is later than end date
+      return 'Reserved';
+    }
   
+    // Create a query to find the events in the same hall
+    const q = query(collection(this.firestore, 'events'), where('hall_id', '==', hallId));
   
+    // Execute the query
+    const querySnapshot = await getDocs(q);
+  
+    // Check each event for a date conflict
+    for (let doc of querySnapshot.docs) {
+      const eventData = doc.data();
+      const eventStart = eventData['start_date'].toDate();
+      const eventEnd = eventData['end_date'].toDate();
+  
+      // Check if the new event's date range overlaps with the existing event's date range
+      if ((eventStartDate >= eventStart && eventStartDate <= eventEnd) || 
+          (eventEndDate >= eventStart && eventEndDate <= eventEnd)) {
+        // Date conflict found
+        return 'Reserved';
+      }
+    }
+  
+    // No date conflict found
+    return 'Not reserved';
+  }
   
 
+  getAllDocumentsByCollectionUsingPromise(collectionName: string): Promise<DocumentData[]> {
+    return new Promise<DocumentData[]>((resolve, reject) => {
+      getDocs(collection(this.firestore, collectionName))
+        .then((querySnapshot: QuerySnapshot<DocumentData>) => {
+          const documents = querySnapshot.docs.map(doc => doc.data());
+          resolve(documents);
+        })
+        .catch((error: any) => {
+          console.error("Error getting documents: ", error);
+          reject(error);
+        });
+    });
+  }
 
-  
+
+  async getAttendeeHomeEvents() : Promise<Event[]>{
+    let events : Event[] = [];
+    try {
+      const collectionRef = collection(this.firestore, 'events');
+      const q = query(collectionRef, where("status", "==", "approved"));
+      const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach(
+        (doc) => {
+          let event = doc.data() as Event;
+          event.start_date = this.utilityService.convertFirebaseTimestamp(event.start_date);
+          event.end_date =  this.utilityService.convertFirebaseTimestamp(event.end_date);
+          events.push(event);
+          // console.log("date after editing: " + event.start_date);
+        }
+      );
+      return events;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return [];
+    }
+  }
+
+async getEventsByHallID(hallId: string): Promise<any[]> {
+  // Get the document ID of the hall using its name
+
+  // Create a query to find the events in the same hall
+  const q = query(collection(this.firestore, 'events'), where('hall_id', '==', hallId));
+
+  // Execute the query
+  const querySnapshot = await getDocs(q);
+
+  // Create an array to store the event data
+  let events:any = [];
+
+  // Add each event data to the array
+  querySnapshot.forEach((doc) => {
+    events.push(doc.data());
+  });
+
+  return events;
+}
+
+  async getEventSpeakers(eventName : any) : Promise<string[]>{
+    let eventId = await this.getDocumentIdByUniqueKey('events', 'name', eventName);
+    let speakers : any[] = [];
+    try {
+      const collectionRef = collection(this.firestore, 'speakers');
+      const q = query(collectionRef, where("event_id", "==", eventId));
+      const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach(
+        (doc) => {
+          let speaker = doc.data()['speaker_name'];
+          speakers.push(speaker);
+        }
+      );
+      return speakers;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return [];
+    }
+  }
+
+  async getEventFloorPlan(hallId : any) : Promise<any>{
+    let floorPlan : any;
+    try {
+      const collectionRef = collection(this.firestore, 'halls');
+      const q = query(collectionRef, where("id", "==", hallId));
+      const querySnapshot = await getDoc(doc(this.firestore, 'halls/' + hallId));
+
+      if(querySnapshot.exists()){
+        floorPlan = querySnapshot.data()['floor_plan'].substring(0,250);
+      }
+      return floorPlan;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return null;
+    }
+  }
+
+  async getEventAttendees(eventName : any) : Promise<string[] | []>{
+    let eventId = await this.getDocumentIdByUniqueKey('events', 'name', eventName);
+    let attendees : any[] = [];
+    try {
+      const collectionRef = collection(this.firestore, 'registrations');
+      const q = query(collectionRef, where("event_id", "==", eventId));
+      const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach(
+        async (doc) => {
+          // get attendee name using the id
+          
+          let attendee = await this.getAttendeeNameById(doc.data()['attendee_id']);
+          attendees.push(attendee);
+          console.log("attendee: " + attendee);
+        }
+      );
+      return attendees;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return [];
+    }
+  }
+
+  async getAttendeeNameById(attendeeId : any) : Promise<string | null>{
+    let attendeeName : any;
+    try {
+      const collectionRef = collection(this.firestore, 'users');
+      const querySnapshot = await getDocs(query(collectionRef, where("uid", "==", attendeeId)));
+
+      querySnapshot.forEach(
+        (doc)=>{
+          attendeeName = doc.data()['firstName'] + " " + doc.data()['lastName'];
+          return attendeeName;
+        }
+      );
+      return attendeeName;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return null;
+    }
+  }
+
+  async registerAttendeeInEvent(eventName : any, attendeeId : any) : Promise<boolean>{
+    try{
+
+      let eventId = await this.getDocumentIdByUniqueKey('events', 'name', eventName);
+      const collectionRef = collection(this.firestore, 'registrations');
+      const docRef = await addDoc(collectionRef, {event_id: eventId, attendee_id: attendeeId});
+      return true;
+    }catch(error){
+      console.log("Error registering event");
+      return false;
+    }
+  }
+
+  async getEventUpdates(eventName : any) : Promise<any[]>{
+    let eventId = await this.getDocumentIdByUniqueKey('events', 'name', eventName);
+    let updates : Update[] = [];
+
+    try {
+      const collectionRef = collection(this.firestore, 'updates');
+      const q = query(collectionRef, where("event_id", "==", eventId));
+      const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach(
+        (doc) => {
+          updates.push({
+            update_header: doc.data()['update_header'],
+            update_text: doc.data()['update_text'],
+          });
+
+        }
+        );
+        console.log("update: " + updates.toString()); 
+      return updates;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return [];
+    }
+  }
+
+  async sendMessage(senderId : any, eventId : any, message : any){
+    try{
+      // get sender name
+      let senderName = await this.getUsernameById(senderId);
+      const collectionRef = collection(this.firestore, 'messages');
+      const docRef = await addDoc(collectionRef, {sender_id: senderId, event_id: eventId, message: message, timestamp: new Date().toDateString() + " - " + new Date().toTimeString(), sender_name: senderName});
+      return true;
+    }catch(error){
+      console.log("Error sending message");
+      return false;
+    }
+  }
+
+  async getMessages(eventId : any) : Promise<any>{ 
+    const q = query(collection(this.firestore, 'messages'), orderBy('timestamp', 'asc'),  where('event_id', '==', eventId));
+
+    this.messages$ = collectionData(q) as Observable<Message[]>;
+
+    return this.messages$;
+
+    
+    // let messages : any[] = [];
+    // try {
+    //   const collectionRef = collection(this.firestore, 'messages');
+    //   const q = query(collectionRef, where("sender_id", "==", senderId), where("receiver_id", "==", receiverId));
+    //   const querySnapshot = await getDocs(q);
+
+    // querySnapshot.forEach(
+    //     (doc) => {
+    //       messages.push({
+    //         sender_id: doc.data()['sender_id'],
+    //         receiver_id: doc.data()['receiver_id'],
+    //         message: doc.data()['message'],
+    //       });
+
+    //     }
+    //     );
+    //     console.log("messages: " + messages.toString()); 
+    //   return messages;
+    // } catch (error) {
+    //   console.error("Error getting documents: ", error);
+    //   return [];
+    // }
+  }
+
+  async getUsernameById(userId : any) : Promise<string | null>{
+    let username : any;
+    try {
+      const collectionRef = collection(this.firestore, 'users');
+      const querySnapshot = await getDocs(query(collectionRef, where("uid", "==", userId)));
+
+      querySnapshot.forEach(
+        (doc)=>{
+          username = doc.data()['firstName'] + " " + doc.data()['lastName'];
+          return username;
+        }
+      );
+      return username;
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+      return null;
+    }
+  }
+
 
 }

@@ -26,7 +26,12 @@
 
   <!-- ignore the error here, it works -->
   <!-- Start of attendee screen -->
-  <div *ngIf="userType=='attendee'">
+  <div *ngIf="userType ==='attendee'">
+    
+    <ion-refresher slot="fixed" (ionRefresh)="handleAttendeeHomeRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
     <ion-searchbar (ionInput)="searchEvents($event)"></ion-searchbar>
     <!-- attendee.user@email.com, pass: admin123 -->
     <ion-list>
@@ -44,7 +49,7 @@
             <p><b>Ends:</b> {{event.end_date}}</p>
             <!--  should be hall name -->
             <p><b>Hall:</b> {{event.hall_name}}</p> 
-            <p><b>Status:</b> {{event.status}}</p>
+
 
               <ion-button 
               color="primary" 
@@ -61,35 +66,82 @@
   <!-- End of Attendee Screen  -->
 
   <!-- Start of client screen -->
-  <div *ngIf="userType=='client'">
+  <div *ngIf="userType ==='client'">
+
+    <ion-refresher slot="fixed" (ionRefresh)="handleClientHomeRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
     <ion-searchbar (ionInput)="searchHalls($event)"></ion-searchbar>
     <!-- attendee.user@email.com, pass: admin123 -->
     <ion-list>
-          <ion-card 
-          *ngFor="let hall of this.hallsCopy"
-          routerLink="/hall/{{hall.name}}" routerDirection="forward"
-          >
-            <!-- <img src="{{hall.picture[0]}}" alt="Event Picture"> -->
-            <img src="https://placehold.co/600x400" alt="Hall Picture">
-            <ion-card-header>
-            <ion-card-title>{{hall.name}}</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <p><b>Capacity:</b> {{hall.capacity}}</p>
-            <p><b>Booth Fiting:</b> {{hall.booth_fiting}}</p>
-              
-            <p><b>Contact:</b> {{hall.contact_info}}</p>
-            
-            <ion-button 
-            color="primary" 
-            size="small" 
-            slot="start"
-            routerLink="/hall/{{hall.name}}" routerDirection="forward"
-            >
-              Learn More
-            </ion-button>
+      <ion-datetime displayFormat="MMMM D, YYYY h:mm A" pickerFormat="MMMM D, YYYY h:mm A" [(ngModel)]="selectedDate" placeholder="Select Date"></ion-datetime>
+      <ion-icon style="margin-left: 10px;" size="large" name="filter" (click)="presentActionSheet()"></ion-icon>
+      <br>
+      <ion-item>
+<ion-select label="Sort By Capacity: " [(ngModel)]="sortOption" (ionChange)="sortChange()">
+  <ion-select-option value="none">None</ion-select-option>
+  <ion-select-option value="asc">Ascending</ion-select-option>
+  <ion-select-option value="desc">Descending</ion-select-option>
+</ion-select>
+</ion-item>
+<ion-item>
+
+<ion-range label="Min Cap:" min="0" max="3000" [pin]="true" [(ngModel)]="minCapacity" (ionChange)="filterByCapacity()">
+  <ion-icon slot="start" size="small" name="people-outline"></ion-icon>
+  <ion-icon slot="end" name="people"></ion-icon>
+  <ion-label slot="start">0</ion-label>
+  <ion-label slot="end">3000</ion-label>
+</ion-range>
+</ion-item>
+<ion-item>
+
+<ion-range label="Max Cap:" min="0" max="3000" [pin]="true" [(ngModel)]="maxCapacity" (ionChange)="filterByCapacity()">
+  <ion-icon slot="start" size="small" name="people-outline"></ion-icon>
+  <ion-icon slot="end" name="people"></ion-icon>
+  <ion-label slot="start">0</ion-label>
+  <ion-label slot="end">3000</ion-label>
+</ion-range>
+
+</ion-item>
+
+
+
+
+      <ion-card 
+      *ngFor="let hall of hallsCopy"
+      >
+        <!-- <img src="{{hall.picture[0]}}" alt="Event Picture"> -->
+        <img [src]="hall.floor_plan" alt="Hall Picture" style="width: 100%; height: auto;">
+        <ion-card-header>
+        <ion-card-title>{{hall.name}}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p><b>Can Fit Upto:</b> {{hall.capacity}} <b>People</b></p>
+        <!-- <p><b>Booth Fiting:</b> {{hall.booth_fiting}}</p> -->
+          
+        <!-- <p><b>Contact:</b> {{hall.contact_info}}</p> -->
+        
+        <ion-button 
+        color="primary" 
+        size="small" 
+        slot="start"
+        [routerLink]="['/hall', hall.name]" 
+        routerDirection="forward"
+      >
+        Learn More
+      </ion-button>
+      <div style="display: flex; justify-content: flex-end; align-items: center;">
+        <ion-button size="small" slot="end" (click)="openForesee(hall.name)" >
+          <ion-icon size="default"  name="calendar-outline"></ion-icon>
+        </ion-button>
+       
+      </div>
+      
           </ion-card-content>
             </ion-card>
+            
+            
         </ion-list>
   </div>
   <!-- End of client Screen -->
@@ -101,28 +153,31 @@
     <ion-searchbar (ionInput)="searchHalls($event)"></ion-searchbar>
     <!-- attendee.user@email.com, pass: admin123 -->
     <ion-list>
+      
+
           <ion-card 
           *ngFor="let hall of this.hallsCopy"
           >
             <!-- <img src="{{hall.picture[0]}}" alt="Event Picture"> -->
-            <img src="https://placehold.co/600x400" alt="Hall Picture">
+            <img [src]="hall.floor_plan" alt="Hall Picture" style="width: 100%; height: auto;">
             <ion-card-header>
             <ion-card-title>{{hall.name}}</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <p><b>Capacity:</b> {{hall.capacity}}</p>
-            <p><b>Booth Fiting:</b> {{hall.booth_fiting}}</p>
+            <p><b>Can Fit Upto:</b> {{hall.capacity}} <b>People</b></p>
+            <!-- <p><b>Booth Fiting:</b> {{hall.booth_fiting}}</p> -->
               
-            <p><b>Contact:</b> {{hall.contact_info}}</p>
+            <!-- <p><b>Contact:</b> {{hall.contact_info}}</p> -->
             
             <ion-button 
             color="primary" 
             size="small" 
             slot="start"
-            routerLink="/hall/{{hall.name}}" routerDirection="forward"
-            >
-              Learn More
-            </ion-button>
+            [routerLink]="['/hall', hall.name]" 
+            routerDirection="forward"
+          >
+            Learn More
+          </ion-button>
             <ion-button (click)="editHall(hall)" color="primary" size="small" slot="start">
               <ion-icon name="create"></ion-icon> Edit
             </ion-button>

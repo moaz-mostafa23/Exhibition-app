@@ -1,0 +1,78 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="primary" (click)="cancel()">Cancel</ion-button>
+    </ion-buttons>
+    <ion-title>Create Custom Event</ion-title>
+    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+ 
+  <form [formGroup]="eventForm">
+    <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false">
+
+    <ion-item>
+     
+      <ion-label>Start Date</ion-label>
+      <ion-datetime displayFormat="MMMM D, YYYY h:mm A" pickerFormat="MMMM D, YYYY h:mm A" formControlName="startDate"></ion-datetime>
+    </ion-item>
+  
+    <ion-item>
+     
+      <ion-label>End Date</ion-label>
+      <ion-datetime displayFormat="MMMM D, YYYY h:mm A" pickerFormat="MMMM D, YYYY h:mm A" formControlName="endDate"></ion-datetime>
+    </ion-item>
+  
+    <ion-item>
+      <ion-reorder slot="start"></ion-reorder>
+      <ion-input label="Event Name" formControlName="eventName" placeholder="Enter event name"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-reorder slot="start"></ion-reorder>
+      <ion-input label="Agenda" formControlName="agenda" placeholder="Enter agenda"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-reorder slot="start"></ion-reorder>
+      <ion-input label="Picture 1" formControlName="pic1" placeholder="Enter URL for picture 1" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-reorder slot="start"></ion-reorder>
+      <ion-input label="Picture 2" formControlName="pic2" placeholder="Enter URL for picture 2"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-reorder slot="start"></ion-reorder>
+      <ion-input label="Speaker Name" formControlName="speakerName" placeholder="Enter speaker name"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-reorder slot="start"></ion-reorder>
+      <ion-label>Hall Name</ion-label>
+      <ion-select formControlName="hallName">
+        <ion-select-option *ngFor="let hall of halls" [value]="hall">{{hall}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-reorder slot="start"></ion-reorder>
+      <ion-input label="Update Header" formControlName="updateHeader" placeholder="Enter update header"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-reorder slot="start"></ion-reorder>
+      <ion-input label="Update Text" formControlName="updates" placeholder="Enter update text"></ion-input>
+    </ion-item>
+  </ion-reorder-group>
+
+  <ion-button (click)="submit()" expand="block" [disabled]="!eventForm.valid">Submit</ion-button>
+
+
+</form>
+
+
+</ion-content>

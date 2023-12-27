@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AlertController, LoadingController, NavController, ModalController } from '@ionic/angular';
+import { AlertController, LoadingController, NavController, ModalController, ActionSheetController } from '@ionic/angular';
 import { User } from '../auth.service';
 import { Auth, getAuth } from '@angular/fire/auth';
 import { AuthService } from '../auth.service';
@@ -9,6 +9,8 @@ import { UtilityService } from '../utility.service';
 import { HallModalPage } from '../hall-modal/hall-modal.page';
 import { firstValueFrom } from 'rxjs';
 import { HallEditModalPage } from '../hall-edit-modal/hall-edit-modal.page';
+import { ForeseePage } from '../foresee/foresee.page';
+
 
 @Component({
   selector: 'app-tab1',
@@ -18,9 +20,8 @@ import { HallEditModalPage } from '../hall-edit-modal/hall-edit-modal.page';
 
 export class Tab1Page implements OnInit, OnDestroy {
   user: any;
-  // halls: any
   private auth: Auth | any;
-  userType: string = '';
+  public userType: string = '';
 
   events: Event[] = [] as Event[]; // this list will be updated and maintained along with the data
   // we will get from the observable. This will help us when filtering search results of the user.
@@ -28,6 +29,12 @@ export class Tab1Page implements OnInit, OnDestroy {
 
   halls: Hall[] = {} as Hall[];
   hallsCopy: Hall[] = {} as Hall[];
+  selectedDate= new Date();
+  sortOption: 'none' | 'asc' | 'desc' = 'none';
+  minCapacity: number = 0;
+  maxCapacity: number = 3000; // Set this to the maximum capacity of your halls
+
+
 
 
 
@@ -40,6 +47,7 @@ export class Tab1Page implements OnInit, OnDestroy {
     public utilityService: UtilityService,
     public navController: NavController,
     private modalController: ModalController,
+    private actionSheet: ActionSheetController
   ) {
 
 
@@ -69,10 +77,13 @@ export class Tab1Page implements OnInit, OnDestroy {
           else if (this.userType == 'attendee')
             await this.getEvents();
 
+            await this.filterHalls('all');
+
         } else {
           loading.dismiss();
           this.navCtrl.navigateForward('/login');
         }
+        
       } catch (err) {
         loading.dismiss();
         console.log(err);
@@ -84,6 +95,9 @@ export class Tab1Page implements OnInit, OnDestroy {
 
   }
 
+  getUserType(){
+    return this.userType;
+  }
 
   ngOnDestroy(): void {
     // Unsubscribe from the userLoggedIn observable to avoid memory leaks
@@ -97,24 +111,10 @@ export class Tab1Page implements OnInit, OnDestroy {
     await loading.present();
 
     try {
-      this.crudService.getDocuments('events').subscribe((events) => {
-        this.events = events as Event[];
-        this.eventsCopy = events as Event[];
-
-        this.events.forEach(element => {
-          element.start_date = this.utilityService.convertFirebaseTimestamp(element.start_date);
-          element.end_date = this.utilityService.convertFirebaseTimestamp(element.end_date);
-        })
-        // same for the eventsCopy
-        this.eventsCopy.forEach(element => {
-          element.start_date = this.utilityService.convertFirebaseTimestamp(element.start_date);
-          element.end_date = this.utilityService.convertFirebaseTimestamp(element.end_date);
-        });
-
-        console.log(this.events);
-        console.log(this.eventsCopy);
-        loading.dismiss();
-      });
+      this.events = await this.crudService.getAttendeeHomeEvents();
+      this.eventsCopy = this.events;
+      console.log(this.events);
+      loading.dismiss();
     } catch (err) {
       let alert = await this.alertController.create({
         header: 'Error',
@@ -126,6 +126,25 @@ export class Tab1Page implements OnInit, OnDestroy {
       console.log(err);
     }
   }
+
+  async handleAttendeeHomeRefresh(event : any){
+    await this.getEvents();
+
+    setTimeout(() => {
+      // Any calls to load data go here
+      event.target.complete();
+    }, 1000);
+  }
+
+  async handleClientHomeRefresh(event : any){
+    await this.getHalls();
+
+    setTimeout(() => {
+      // Any calls to load data go here
+      event.target.complete();
+    }, 1000);
+  }
+
   async openHallModal() {
     try {
       console.log('Opening Hall Modal');
@@ -246,4 +265,128 @@ export class Tab1Page implements OnInit, OnDestroy {
       console.error('Error opening Hall Edit Modal', error);
     }
   }
+
+  async openForesee(hallName:any){
+    const hallDocID = await this.crudService.getDocumentIdByUniqueKey('halls','name',hallName);
+    const modal = await this.modalController.create({
+      component: ForeseePage,
+      componentProps:{
+        'hallID': hallDocID
+      }
+    });
+    return await modal.present();
+
+
+
+  }
+
+
+  async presentActionSheet(){
+    const action = await this.actionSheet.create({
+      header: 'Filter',
+      buttons: [{
+        text: 'Reserved',
+        handler: async () => {
+          const loading = await this.loadingController.create({
+            message: 'Please wait...',
+          });
+          await loading.present();
+          await this.filterHalls('reserved');
+          await loading.dismiss();
+        }
+      }, {
+        text: 'Available',
+        handler: async () => {
+          const loading = await this.loadingController.create({
+            message: 'Please wait...',
+          });
+          await loading.present();
+          await this.filterHalls('available');
+          await loading.dismiss();
+        }
+      }, {
+        text: 'All',
+        handler: async () => {
+          const loading = await this.loadingController.create({
+            message: 'Please wait...',
+          });
+          await loading.present();
+          await this.filterHalls('all');
+          await loading.dismiss();
+        }
+      }]
+    });
+  
+    await action.present();
+  }
+  
+
+  async filterHalls(option: any) {
+
+    let hallsPromises = this.halls.map(async (hall: any) => {
+      let events = await this.crudService.getEventsByHallID(hall.id);
+      let isReserved = events.some((event: any) =>
+        event.status === 'approved' &&
+        this.isDateInRange(this.selectedDate, event.start_date.toDate(), event.end_date.toDate())
+      );
+  
+      if (option === 'reserved' && isReserved) {
+        return hall;
+      } else if (option === 'available' && !isReserved) {
+        return hall;
+      } else if (option === 'all') {
+        return hall;
+      }
+    });
+  
+    this.hallsCopy = (await Promise.all(hallsPromises)).filter(hall => hall !== undefined);
+    
+  }
+  
+
+  isDateInRange(date:Date, startDate:Date, endDate:Date) {
+    let d = new Date(date);
+    let start = new Date(startDate);
+    let end = new Date(endDate);
+  
+    // Set the time on the dates to be the same, so we're only comparing the date part
+    d.setHours(0, 0, 0, 0);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+  
+    return d >= start && d <= end;
+  }
+
+  sortByCapacity(order: 'asc' | 'desc') {
+    this.hallsCopy.sort((a:any, b:any) => {
+      if (order === 'asc') {
+        return a.capacity - b.capacity;
+      } else {
+        return b.capacity - a.capacity;
+      }
+    });
+  }
+  sortChange() {
+    if (this.sortOption === 'asc') {
+      this.sortByCapacity('asc');
+    } else if (this.sortOption === 'desc') {
+      this.sortByCapacity('desc');
+    } else {
+      this.resetSort();
+    }
+  }
+  
+  
+
+  resetSort() {
+    this.hallsCopy = [...this.halls];
+  }
+
+  filterByCapacity() {
+    this.hallsCopy = this.halls.filter((hall:any) => hall.capacity >= this.minCapacity && hall.capacity <= this.maxCapacity);
+  }
+  
+  
+
+
 }

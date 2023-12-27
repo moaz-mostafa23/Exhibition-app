@@ -1,3 +1,4 @@
+<!-- hall-edit-modal.page.html -->
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Edit Hall</ion-title>
@@ -10,7 +11,10 @@
 </ion-header>
 
 <ion-content>
-  <!-- Your editing form goes here -->
+  <ion-item>
+    <ion-label position="floating">Name</ion-label>
+    <ion-input type="text" [(ngModel)]="editedHall.name" name="name"></ion-input>
+  </ion-item>
   <ion-item>
     <ion-label position="floating">Booth Fitting</ion-label>
     <ion-input type="text" [(ngModel)]="editedHall.booth_fiting" name="booth_fiting"></ion-input>
@@ -24,11 +28,11 @@
     <ion-input type="text" [(ngModel)]="editedHall.contact_info" name="contact_info"></ion-input>
   </ion-item>
   <ion-item>
-    <ion-label position="floating">Floor Plan</ion-label>
+    <ion-label position="floating">Floor Plan image</ion-label>
     <ion-input type="text" [(ngModel)]="editedHall.floor_plan" name="floor_plan"></ion-input>
   </ion-item>
 
-  <!-- Add more form fields for other hall properties -->
+    <!-- Add more form fields for other hall properties -->
 
-  <ion-button expand="full" (click)="updateHall()">Update Hall</ion-button>
+    <ion-button expand="full" (click)="updateHall()">Update Hall</ion-button>
 </ion-content>
