@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CrudService } from '../crud.service';
 import { Event } from '../crud.service';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-event',
@@ -24,6 +24,7 @@ export class EventPage implements OnInit {
     public loadingController : LoadingController,
     public alertController : AlertController,
     public authService : AuthService,
+    public navController : NavController,
   ) { }
 
   ngOnInit() {
@@ -156,6 +157,10 @@ export class EventPage implements OnInit {
   async getEventUpdates(){
     this.updates = await this.crudService.getEventUpdates(this.event.name);
     console.log(this.updates);
+  }
+
+  backToHome(){
+    this.navController.navigateBack('/tabs');
   }
 
 }
