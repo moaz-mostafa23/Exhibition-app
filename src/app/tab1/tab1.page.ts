@@ -21,7 +21,7 @@ import { ForeseePage } from '../foresee/foresee.page';
 export class Tab1Page implements OnInit, OnDestroy {
   user: any;
   private auth: Auth | any;
-  userType: string = '';
+  public userType: string = '';
 
   events: Event[] = [] as Event[]; // this list will be updated and maintained along with the data
   // we will get from the observable. This will help us when filtering search results of the user.
@@ -95,6 +95,9 @@ export class Tab1Page implements OnInit, OnDestroy {
 
   }
 
+  getUserType(){
+    return this.userType;
+  }
 
   ngOnDestroy(): void {
     // Unsubscribe from the userLoggedIn observable to avoid memory leaks
