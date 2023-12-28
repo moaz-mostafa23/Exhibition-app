@@ -1,0 +1,7 @@
+default pass: admin123
+admin@email.com
+attendee@email.com
+client1@gmail.com // pass: client123
+c1@email.com
+c2@email.com
+
